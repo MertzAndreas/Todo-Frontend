@@ -2,6 +2,8 @@
 import React, {FormEvent, useEffect, useState} from "react";
 import {useSignalR} from "@/app/SignalRContext";
 import {type} from "node:os";
+import {router} from "next/client";
+import {useRouter} from "next/navigation";
 
 type Message = {
     senderId: string;
@@ -14,6 +16,7 @@ const Chat: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
+    const router = useRouter();
 
     useEffect(() => {
         if(connection){
@@ -41,7 +44,19 @@ const Chat: React.FC = () => {
 
             if (!connection) {
                 return <div>No connection</div>;
-            }}
+            }
+            if(localStorage.getItem('token') === undefined){
+                try {
+                    localStorage.removeItem('token');
+                    router.push('/Account/Login');
+                }
+                catch (error) {
+                    console.error('An error occurred:', error);
+                }
+            }
+        }
+        
+
         
         connectionError().then(() => {return {connection}}
         );

@@ -2,6 +2,7 @@
 import React, {useState} from 'react';
 import {useRouter} from "next/navigation";
 import {useSignalR} from "@/app/SignalRContext";
+import Link from "next/link";
 
 type RegisterForm = {
     username: string;
@@ -53,11 +54,11 @@ const Register = () => {
             console.error('An error occurred:', error);
         }
     }
-
+    
     return (
         <div className="flex flex-col justify-center items-center h-screen bg-gray-200">
             <h1 className="text-4xl font-bold mb-6">Register Account</h1>
-    <form onSubmit={handleSubmit} className="flex flex-col w-3/5 gap-4 p-8 bg-white rounded-lg shadow-lg">
+    <form onSubmit={handleSubmit} className="flex flex-col w-3/5 gap-4 p-8 bg-white rounded-t-lg shadow-lg">
         <input
             type="text"
             name="username"
@@ -97,6 +98,9 @@ const Register = () => {
             Register
         </button>
     </form>
+            <Link href={"/Account/Login"} className="flex flex-col w-3/5 p-8 bg-white rounded-b-lg shadow-lg">
+                <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">Already have an account</button>
+            </Link>
 </div>
     );
 };
