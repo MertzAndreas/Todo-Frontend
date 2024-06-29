@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
+
 interface SignalRContextType {
     connection: HubConnection | null;
     startConnection: (token: string) => void;
