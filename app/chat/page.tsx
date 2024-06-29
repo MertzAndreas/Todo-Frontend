@@ -1,6 +1,7 @@
 "use client"
 import React, {FormEvent, useEffect, useState} from "react";
 import {useSignalR} from "@/app/SignalRContext";
+import {type} from "node:os";
 
 type Message = {
     senderId: string;
@@ -12,7 +13,7 @@ const Chat: React.FC = () => {
     const { connection } = useSignalR();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
-
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         if(connection){
@@ -25,14 +26,25 @@ const Chat: React.FC = () => {
             });
 
             connection.start()
-                .then((() => connection.invoke("RetrieveMessageHistory")))
+                .then((() => {connection.invoke("RetrieveMessageHistory"); setLoading(false); }))
                 .catch(err => console.error(err));
-
+            
             return () => {
                 connection.off("ReceiveMessage");
                 connection.off("MessageHistory");
             };
         }
+        const connectionError = async () => {
+            if(loading){
+                return <div>Loading...</div>
+            }
+
+            if (!connection) {
+                return <div>No connection</div>;
+            }}
+        
+        connectionError().then(() => {return {connection}}
+        );
     }, [connection]);
 
     const handleSendMessage = (event : FormEvent)  => {
@@ -43,11 +55,8 @@ const Chat: React.FC = () => {
                 .catch(err => console.error(err));
         }
     };
-
-    if (!connection) {
-        return <div>No connection</div>;
-    }
-
+    
+        
     return (
         <div>
             <div>
