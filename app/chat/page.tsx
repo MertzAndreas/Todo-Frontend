@@ -1,8 +1,6 @@
 "use client"
-// src/Chat.tsx
-
 import React, {FormEvent, useEffect, useState} from "react";
-import connection from "./signalrService";
+import {useSignalR} from "@/app/SignalRContext";
 
 type Message = {
     senderId: string;
@@ -11,41 +9,44 @@ type Message = {
 };
 
 const Chat: React.FC = () => {
+    const { connection } = useSignalR();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
 
+
     useEffect(() => {
-        connection.on("ReceiveMessage", (senderId: string, content: string, sentTime: string) => {
-            setMessages(prevMessages => [...prevMessages, { senderId, content, sentTime }]);
-        });
+        if(connection){
+            connection.on("ReceiveMessage", (senderId: string, content: string, sentTime: string) => {
+                setMessages(prevMessages => [...prevMessages, { senderId, content, sentTime }]);
+            });
 
-        connection.on("MessageHistory", (messageHistory: Message[]) => {
-            setMessages(messageHistory);
-        });
+            connection.on("MessageHistory", (messageHistory: Message[]) => {
+                setMessages(messageHistory);
+            });
 
-        connection.start()
-            .then((() => connection.invoke("RetrieveMessageHistory")))
-            .catch(err => console.error(err));
+            connection.start()
+                .then((() => connection.invoke("RetrieveMessageHistory")))
+                .catch(err => console.error(err));
 
-        return () => {
-            connection.off("ReceiveMessage");
-            connection.off("MessageHistory");
-        };
-    }, []);
+            return () => {
+                connection.off("ReceiveMessage");
+                connection.off("MessageHistory");
+            };
+        }
+    }, [connection]);
 
     const handleSendMessage = (event : FormEvent)  => {
         event.preventDefault();
-        if (newMessage.trim()) {
+        if (newMessage.trim() && connection) {
             connection.invoke("PostMessage", newMessage)
                 .then(() => setNewMessage(""))
                 .catch(err => console.error(err));
         }
-
-        if(connection.connectionId != null){
-            const message : Message = { senderId: connection.connectionId, content: newMessage, sentTime: new Date().toISOString() };
-            setMessages(prevMessages => [...prevMessages, message]);
-        }
     };
+
+    if (!connection) {
+        return <div>No connection</div>;
+    }
 
     return (
         <div>
