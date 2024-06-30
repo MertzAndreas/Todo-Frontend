@@ -1,6 +1,6 @@
 "use client"
 import React, { FormEvent, useEffect, useState } from "react";
-import { useSignalRContext } from "@/app/utils/SignalRProvider";
+import {useSignalR} from "@/app/hooks/useSignalR";
 
 type Message = {
     senderId: string;
@@ -9,15 +9,12 @@ type Message = {
 };
 
 const Chat: React.FC = () => {
-    const { connection, isConnected, createConnection, stopConnection } = useSignalRContext();
+    const [connection, isConnected] = useSignalR();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
 
     useEffect(() => {
-        if (!connection) {
-            createConnection();
-            return;
-        }
+        if(!connection) return;
 
         const handleReceiveMessage = (senderId: string, content: string, sentTime: string) => {
             setMessages(prevMessages => [...prevMessages, { senderId, content, sentTime }]);
@@ -38,9 +35,8 @@ const Chat: React.FC = () => {
         return () => {
             connection.off("ReceiveMessage", handleReceiveMessage);
             connection.off("MessageHistory", handleMessageHistory);
-            stopConnection();
         };
-    }, [connection, isConnected, createConnection, stopConnection]);
+    }, [connection, isConnected]);
 
     const handleSendMessage = (event: FormEvent) => {
         event.preventDefault();
