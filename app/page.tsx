@@ -1,11 +1,15 @@
-"use client"
-
-import {useRouter} from "next/navigation";
-
+import Link from "next/link";
 export default function Home() {
-  const router = useRouter();
-  router.push('/Account/Login');
   return (
-    <div></div>
+    <div>
+      <h1>Welcome to our website!</h1>
+      <p>Some information about the website...</p>
+      <Link href="/Account/Login">
+        Login
+      </Link>
+      <Link href="/Account/Register">
+        Register
+      </Link>
+    </div>
   );
 }

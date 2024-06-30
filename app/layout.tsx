@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import {SignalRProvider} from "@/app/SignalRContext";
+import {SignalRProvider} from "@/app/utils/SignalRProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 

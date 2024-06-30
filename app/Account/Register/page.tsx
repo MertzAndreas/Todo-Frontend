@@ -1,8 +1,8 @@
 "use client"
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useRouter} from "next/navigation";
-import {useSignalR} from "@/app/SignalRContext";
 import Link from "next/link";
+import {useToken} from "@/app/hooks/useToken";
 
 type RegisterForm = {
     username: string;
@@ -12,8 +12,8 @@ type RegisterForm = {
 }
 
 const Register = () => {
-    const {isConnected} = useSignalR();
     const router = useRouter();
+    const {validateToken} = useToken();
     const [form, setForm] = useState<RegisterForm>({
         username: '',
         email: '',
@@ -22,9 +22,9 @@ const Register = () => {
     });
 
 
-    if(isConnected){
-        router.push('/');
-    }
+    useEffect(() => {
+        validateToken();
+    }, [validateToken]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({...form, [e.target.name]: e.target.value});
@@ -35,6 +35,7 @@ const Register = () => {
         try {
             const res = await fetch('http://localhost:5040/Account/register', {
                 method: 'POST',
+                credentials : 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -44,9 +45,8 @@ const Register = () => {
 
             if (res.ok) {
                 const data = await res.json();
-                console.log('Token received:', data.token);
-                localStorage.setItem('token', data.token);
-                await router.push('/chat');
+                localStorage.setItem('token', data.accessToken);
+                router.push('/chat');
             } else {
                 console.error('Registration failed:', res.statusText);
             }
@@ -98,7 +98,7 @@ const Register = () => {
             Register
         </button>
     </form>
-            <Link href={"/Account/Login"} className="flex flex-col w-3/5 p-8 bg-white rounded-b-lg shadow-lg">
+            <Link href={"/Account/Login"}>
                 <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">Already have an account</button>
             </Link>
 </div>

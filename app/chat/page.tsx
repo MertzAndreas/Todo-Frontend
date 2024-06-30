@@ -1,9 +1,6 @@
 "use client"
-import React, {FormEvent, useEffect, useState} from "react";
-import {useSignalR} from "@/app/SignalRContext";
-import {type} from "node:os";
-import {router} from "next/client";
-import {useRouter} from "next/navigation";
+import React, { FormEvent, useEffect, useState } from "react";
+import { useSignalRContext } from "@/app/utils/SignalRProvider";
 
 type Message = {
     senderId: string;
@@ -12,66 +9,48 @@ type Message = {
 };
 
 const Chat: React.FC = () => {
-    const { connection } = useSignalR();
+    const { connection, isConnected, createConnection, stopConnection } = useSignalRContext();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(true);
-    const router = useRouter();
 
     useEffect(() => {
-        if(connection){
-            connection.on("ReceiveMessage", (senderId: string, content: string, sentTime: string) => {
-                setMessages(prevMessages => [...prevMessages, { senderId, content, sentTime }]);
-            });
+        if (!connection) {
+            createConnection();
+            return;
+        }
 
-            connection.on("MessageHistory", (messageHistory: Message[]) => {
-                setMessages(messageHistory);
-            });
+        const handleReceiveMessage = (senderId: string, content: string, sentTime: string) => {
+            setMessages(prevMessages => [...prevMessages, { senderId, content, sentTime }]);
+        };
 
-            connection.start()
-                .then((() => {connection.invoke("RetrieveMessageHistory"); setLoading(false); }))
+        const handleMessageHistory = (messageHistory: Message[]) => {
+            setMessages(messageHistory);
+        };
+
+        connection.on("ReceiveMessage", handleReceiveMessage);
+        connection.on("MessageHistory", handleMessageHistory);
+
+        if (isConnected) {
+            connection.invoke("RetrieveMessageHistory")
                 .catch(err => console.error(err));
-            
-            return () => {
-                connection.off("ReceiveMessage");
-                connection.off("MessageHistory");
-            };
         }
-        const connectionError = async () => {
-            if(loading){
-                return <div>Loading...</div>
-            }
 
-            if (!connection) {
-                return <div>No connection</div>;
-            }
-            if(localStorage.getItem('token') === undefined){
-                try {
-                    localStorage.removeItem('token');
-                    router.push('/Account/Login');
-                }
-                catch (error) {
-                    console.error('An error occurred:', error);
-                }
-            }
-        }
-        
+        return () => {
+            connection.off("ReceiveMessage", handleReceiveMessage);
+            connection.off("MessageHistory", handleMessageHistory);
+            stopConnection();
+        };
+    }, [connection, isConnected, createConnection, stopConnection]);
 
-        
-        connectionError().then(() => {return {connection}}
-        );
-    }, [connection]);
-
-    const handleSendMessage = (event : FormEvent)  => {
+    const handleSendMessage = (event: FormEvent) => {
         event.preventDefault();
-        if (newMessage.trim() && connection) {
+        if (newMessage.trim() && connection?.state === "Connected") {
             connection.invoke("PostMessage", newMessage)
                 .then(() => setNewMessage(""))
                 .catch(err => console.error(err));
         }
     };
-    
-        
+
     return (
         <div>
             <div>
@@ -87,15 +66,14 @@ const Chat: React.FC = () => {
             <div>
                 <form onSubmit={handleSendMessage}>
                     <input
-                        name={"messageInput"}
+                        name="messageInput"
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type your message here"
                     />
-                    <button type={"submit"}>Send</button>
+                    <button type="submit">Send</button>
                 </form>
-
             </div>
         </div>
     );
