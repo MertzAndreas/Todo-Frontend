@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { isTokenExpired } from '@/app/utils/isTokenExpired';
 
-export const useToken = () => {
+export const useToken = (failRouterUrl? : string, sucessRouterUrl? : string) => {
     const router = useRouter();
 
     const refreshAccessToken = useCallback(async () => {
@@ -20,9 +20,12 @@ export const useToken = () => {
             localStorage.setItem('token', newToken);
             return newToken;
         } else {
-            router.push('/Account/Login');
             if(data.errorCode === "INVALID_TOKEN")
                 throw new Error(data.message || 'Invalid refresh failed');
+            if(failRouterUrl){
+                router.push(failRouterUrl);
+            }
+
         }
     }, [router]);
 
@@ -35,8 +38,8 @@ export const useToken = () => {
 
     const validateToken = useCallback(async () => {
         const token = localStorage.getItem('token');
-        if (token && !isTokenExpired(token)) {
-            router.push('/chat');
+        if (token && !isTokenExpired(token) && sucessRouterUrl) {
+            router.push(sucessRouterUrl);
         } else {
             await refreshAccessToken();
         }

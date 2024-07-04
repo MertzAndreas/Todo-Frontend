@@ -3,31 +3,38 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useToken } from "@/app/hooks/useToken";
+import {getUserIdFromToken} from "@/app/utils/isTokenExpired";
 
-type LoginForm = {
-    email: string;
-    password: string;
+type CreateProject = {
+    name: string;
+    description: string;
+    creatorId: string
 }
 
 const Login = () => {
     const router = useRouter();
-    const { validateToken } = useToken('/Account/Login');
-    const [form, setForm] = useState<LoginForm>({
-        email: '',
-        password: '',
+    const [form, setForm] = useState<CreateProject>(() => {
+        const id = getUserIdFromToken();
+        if (!id) {
+            throw new Error("Invalid token");
+        }
+        return {
+            name: '',
+            description: '',
+            creatorId: id
+        };
     });
-    useEffect(() => {
-        validateToken();
-    }, [validateToken]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:5040/Account/login', {
+            if(form.creatorId === null){
+                throw new Error("Invalid token");
+            }
+
+            setForm({...form, creatorId: form.creatorId});
+            console.log(form)
+            const res = await fetch('http://localhost:5040/api/Project', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -35,16 +42,9 @@ const Login = () => {
                 },
                 body: JSON.stringify(form),
             });
-
-            if (res.ok) {
-                const data = await res.json();
-                localStorage.setItem('token', data.accessToken);
-                router.push('/chat');
-            } else {
-                console.error('Login failed:', res.statusText);
-            }
-        } catch (error) {
-            console.error('An error occurred:', error);
+        }
+        catch (e) {
+            console.error(e);
         }
     }
 
@@ -53,26 +53,25 @@ const Login = () => {
             <h1 className="text-4xl font-bold mb-6">Login to your Account</h1>
             <form onSubmit={handleSubmit} className="flex flex-col w-3/5 gap-4 p-8 bg-white rounded-t-lg shadow-lg">
                 <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={form.email}
-                    onChange={handleChange}
+                    type="text"
+                    name="projectName"
+                    placeholder="Cool Project Name"
+                    value={form.name}
+                    onChange={(e) => setForm({...form, name: e.target.value})}
                     className="p-2 border rounded"
                 />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={form.password}
-                    onChange={handleChange}
+                <textarea
+                    name="description"
+                    placeholder="Project Description"
+                    value={form.description}
+                    onChange={(e) => setForm({...form, description: e.target.value})}
                     className="p-2 border rounded"
                 />
                 <button
                     type="submit"
                     className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                 >
-                    Login
+                    Create Project
                 </button>
             </form>
             <Link href={"/Account/Register"}>
