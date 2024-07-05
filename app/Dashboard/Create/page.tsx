@@ -13,15 +13,17 @@ type CreateProject = {
 
 const Login = () => {
     const router = useRouter();
+    const { validateAndRefreshToken, getToken } = useToken("Account/Login");
     const [form, setForm] = useState<CreateProject>(() => {
         const id = getUserIdFromToken();
         if (!id) {
-            throw new Error("Invalid token");
+            console.log("Invalid token");
+            router.push('/Account/Login');
         }
         return {
             name: '',
             description: '',
-            creatorId: id
+            creatorId: id || ''
         };
     });
 
@@ -33,12 +35,12 @@ const Login = () => {
             }
 
             setForm({...form, creatorId: form.creatorId});
-            console.log(form)
             const res = await fetch('http://localhost:5040/api/Project', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + await getToken()
                 },
                 body: JSON.stringify(form),
             });
@@ -74,8 +76,8 @@ const Login = () => {
                     Create Project
                 </button>
             </form>
-            <Link href={"/Account/Register"}>
-                <button className="p-2 bg-neutral-400 text-white rounded hover:bg-blue-600 transition-colors">Sign Up</button>
+            <Link href={"/Dashboard"}>
+                <button className="p-2 bg-neutral-400 text-white rounded hover:bg-blue-600 transition-colors">Back to dashboard</button>
             </Link>
         </div>
     );

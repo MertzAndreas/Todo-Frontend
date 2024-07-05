@@ -14,11 +14,11 @@ interface Project {
 }
 
 const Page = () => {
-    const { validateToken } = useToken('/Account/Login');
+    const { validateAndRefreshToken, getToken } = useToken('/Account/Login');
     const [projects, setProjects] = useState<Project[]>([])
     useEffect(() => {
-        validateToken();
-    }, [validateToken]);
+        validateAndRefreshToken();
+    }, [validateAndRefreshToken]);
     useEffect(() => {
         const fetchData = async () => {
             const penis = getUserIdFromToken()
@@ -31,6 +31,7 @@ const Page = () => {
                     credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + await getToken()
                     },
                 })
 
@@ -50,6 +51,7 @@ const Page = () => {
             credentials : "include",
             headers : {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + await getToken()
             }
         })
 

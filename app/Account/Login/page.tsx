@@ -11,14 +11,14 @@ type LoginForm = {
 
 const Login = () => {
     const router = useRouter();
-    const { validateToken } = useToken('/Account/Login');
+    const { validateAndRefreshToken } = useToken(undefined, '/chat');
     const [form, setForm] = useState<LoginForm>({
         email: '',
         password: '',
     });
     useEffect(() => {
-        validateToken();
-    }, [validateToken]);
+        validateAndRefreshToken();
+    }, [validateAndRefreshToken]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });

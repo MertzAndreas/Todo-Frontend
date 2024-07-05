@@ -13,7 +13,7 @@ type RegisterForm = {
 
 const Register = () => {
     const router = useRouter();
-    const {validateToken} = useToken();
+    const { validateAndRefreshToken } = useToken('','/chat');
     const [form, setForm] = useState<RegisterForm>({
         username: '',
         email: '',
@@ -23,8 +23,8 @@ const Register = () => {
 
 
     useEffect(() => {
-        validateToken();
-    }, [validateToken]);
+        validateAndRefreshToken();
+    }, [validateAndRefreshToken]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({...form, [e.target.name]: e.target.value});

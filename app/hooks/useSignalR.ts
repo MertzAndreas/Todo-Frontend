@@ -9,19 +9,17 @@ import { useToken } from '@/app/hooks/useToken';
 
 export const useSignalR = (hubUrl?: string) => {
     const [isConnected, setIsConnected] = useState(false);
-    const { handleToken } = useToken();
+    const { getToken } = useToken();
 
     const connectionRef = useRef<HubConnection | null>(null);
+    let didInit = false
 
     useEffect(() => {
         const initializeConnection = async () => {
+            if(didInit) return;
             try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    throw new Error('No token available');
-                }
-
-                const validToken = await handleToken(token);
+                didInit = true;
+                const validToken = await getToken();
 
                 const newConnection = new HubConnectionBuilder()
                     .withUrl(hubUrl || `http://localhost:5040/hub`, {
@@ -65,7 +63,7 @@ export const useSignalR = (hubUrl?: string) => {
                 connectionRef.current.stop();
             }
         };
-    }, [hubUrl, handleToken]);
+    }, [hubUrl, getToken]);
 
     return [connectionRef.current, isConnected] as const;
 };
