@@ -71,23 +71,6 @@ const theme = extendTheme({
                 variant: 'basic'
             },
         },
-        Heading:{
-            variants: {
-                basic: {
-                    as: "h1",
-                    size: "2xl",
-                    mb : 6,
-                },
-                h2:{
-                    as: "h2",
-                    size: "lg",
-                    mb : 2,
-                }
-            },
-            defaultProps: {
-                variant: "basic"
-            },
-        },
     },
     colors: {
 
