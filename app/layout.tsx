@@ -1,6 +1,5 @@
 import type {Metadata} from "next";
 import {Inter} from "next/font/google";
-import "./globals.css";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import ChakraProvider from "@/providers/ChakraProvider";
 import Navbar from "@/components/Navbar";
