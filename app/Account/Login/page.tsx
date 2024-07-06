@@ -46,7 +46,7 @@ const Login = () => {
 
     return (
         <Flex flexDirection="column" justifyContent="center" alignItems="center" height="100vh" bg="gray.200">
-            <Heading as="h1" mb={2}>Login to your Account</Heading>
+            <Heading variant="basic">Login to your Account</Heading>
             <Box as="form" onSubmit={handleSubmit} width="60%" p={8} bg="white" borderRadius="lg" shadow="lg" display="flex" flexDirection="column" gap={4}>
                 <Input
                     type="email"
@@ -54,7 +54,9 @@ const Login = () => {
                     placeholder="Email"
                     value={form.email}
                     onChange={handleChange}
-                    variant="basic"
+                    p={2}
+                    border= "1px"
+                    borderRadius="md"
                 />
                 <Input
                     type="password"
@@ -62,7 +64,9 @@ const Login = () => {
                     placeholder="Password"
                     value={form.password}
                     onChange={handleChange}
-                    variant="basic"
+                    p={2}
+                    border= "1px"
+                    borderRadius="md"
                 />
                 <Button
                     type="submit"

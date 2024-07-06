@@ -58,7 +58,9 @@ const Register = () => {
                     placeholder="Username"
                     value={form.username}
                     onChange={handleChange}
-                    variant="basic"
+                    p={2}
+                    border= "1px"
+                    borderRadius="md"
                 />
                 <Input
                     type="email"
@@ -66,7 +68,9 @@ const Register = () => {
                     placeholder="Email"
                     value={form.email}
                     onChange={handleChange}
-                    variant="basic"
+                    p={2}
+                    border= "1px"
+                    borderRadius="md"
                 />
                 <Input
                     type="password"
@@ -74,7 +78,9 @@ const Register = () => {
                     placeholder="Password"
                     value={form.password}
                     onChange={handleChange}
-                    variant="basic"
+                    p={2}
+                    border= "1px"
+                    borderRadius="md"
                 />
                 <Input
                     type="password"
@@ -82,7 +88,9 @@ const Register = () => {
                     placeholder="Confirm Password"
                     value={form.confirmPassword}
                     onChange={handleChange}
-                    variant="basic"
+                    p={2}
+                    border= "1px"
+                    borderRadius="md"
                 />
                 <Button
                     type="submit"
