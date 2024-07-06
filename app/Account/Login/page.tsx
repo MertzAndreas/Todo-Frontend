@@ -46,7 +46,7 @@ const Login = () => {
 
     return (
         <Flex flexDirection="column" justifyContent="center" alignItems="center" height="100vh" bg="gray.200">
-            <Heading as="h1" size="2xl" mb={6}>Login to your Account</Heading>
+            <Heading variant="basic">Login to your Account</Heading>
             <Box as="form" onSubmit={handleSubmit} width="60%" p={8} bg="white" borderRadius="lg" shadow="lg" display="flex" flexDirection="column" gap={4}>
                 <Input
                     type="email"
@@ -54,9 +54,7 @@ const Login = () => {
                     placeholder="Email"
                     value={form.email}
                     onChange={handleChange}
-                    p={2}
-                    border="1px"
-                    borderRadius="md"
+                    variant="basic"
                 />
                 <Input
                     type="password"
@@ -64,24 +62,17 @@ const Login = () => {
                     placeholder="Password"
                     value={form.password}
                     onChange={handleChange}
-                    p={2}
-                    border="1px"
-                    borderRadius="md"
+                    variant="basic"
                 />
                 <Button
                     type="submit"
-                    p={2}
-                    bg="blue.500"
-                    color="white"
-                    borderRadius="md"
-                    _hover={{ bg: "blue.600" }}
-                    transition="background-color 0.2s"
+                    variant="blueButton"
                 >
                     Login
                 </Button>
             </Box>
             <Link href="/Account/Register">
-                <Button mt={4} p={2} bg="gray.400" color="white" borderRadius="md" _hover={{ bg: "blue.600" }} transition="background-color 0.2s">
+                <Button variant="greyButton">
                     Sign Up
                 </Button>
             </Link>

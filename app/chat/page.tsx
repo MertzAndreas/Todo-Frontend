@@ -76,7 +76,7 @@ const Chat: React.FC = () => {
                             _placeholder={{ color: 'gray.400' }}
                         />
                     </FormControl>
-                    <Button type="submit" colorScheme="blue">
+                    <Button type="submit" variant="bluebutton">
                         Send
                     </Button>
             </Box>

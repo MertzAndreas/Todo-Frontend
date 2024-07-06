@@ -9,24 +9,14 @@ export default function Home() {
               <Stack spacing={8} direction='row' justifyContent='center'>
                   <Link href='/Account/Login'>
                       <Button
-                          p={2}
-                          bg="blue.500"
-                          color="white"
-                          borderRadius="md"
-                          _hover={{ bg: "blue.600" }}
-                          transition="background-color 0.2s"
+                          variant = "blueButton"
                       >
                           Login
                       </Button>
                   </Link>
                   <Link href="/Account/Register">
                       <Button
-                          p={2}
-                          bg="blue.500"
-                          color="white"
-                          borderRadius="md"
-                          _hover={{ bg: "blue.600" }}
-                          transition="background-color 0.2s"
+                          variant = "blueButton"
                       >
                           Register
                       </Button>

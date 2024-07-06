@@ -82,16 +82,16 @@ const Page = () => {
             {projects.length > 0 ? (
                 projects.map((project) => (
                     <Box key={project.projectId} bg="white" p={6} mb={4} borderRadius="lg" shadow="md" width="60%">
-                        <Heading as="h2" size="lg" mb={2}>{project.name}</Heading>
+                        <Heading variant="h2">{project.name}</Heading>
                         <Text mb={2} color="gray.700">{project.description}</Text>
                         <Text mb={1} color="gray.500">Created by: {project.creatorName}</Text>
                         <Text mb={4} color="gray.500">Team size: {project.teamSize}</Text>
                         <Link href={`/Dashboard/${project.projectId}`} >
-                            <Button bg="blue.500" color="white" mr={2} _hover={{ bg: "blue.600" }}>
+                            <Button variant="blueButton">
                                 View Project
                             </Button>
                         </Link>
-                        <Button onClick={() => mutate({ projectId: project.projectId, getToken})} bg="red.500" color="white" _hover={{ bg: "red.600" }}>
+                        <Button onClick={() => mutate({ projectId: project.projectId, getToken})} variant="redButton">
                             Delete Project
                         </Button>
                     </Box>
@@ -100,7 +100,7 @@ const Page = () => {
                 <Text color="gray.700">No projects available.</Text>
             )}
             <Link href="/Dashboard/Create">
-                <Button mt={4} bg="blue.500" color="white" _hover={{ bg: "blue.600" }}>
+                <Button variant="blueButton">
                     Create new Project
                 </Button>
             </Link>

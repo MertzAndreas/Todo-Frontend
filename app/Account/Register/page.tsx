@@ -58,9 +58,7 @@ const Register = () => {
                     placeholder="Username"
                     value={form.username}
                     onChange={handleChange}
-                    p={2}
-                    border="1px"
-                    borderRadius="md"
+                    variant="basic"
                 />
                 <Input
                     type="email"
@@ -68,9 +66,7 @@ const Register = () => {
                     placeholder="Email"
                     value={form.email}
                     onChange={handleChange}
-                    p={2}
-                    border="1px"
-                    borderRadius="md"
+                    variant="basic"
                 />
                 <Input
                     type="password"
@@ -78,9 +74,7 @@ const Register = () => {
                     placeholder="Password"
                     value={form.password}
                     onChange={handleChange}
-                    p={2}
-                    border="1px"
-                    borderRadius="md"
+                    variant="basic"
                 />
                 <Input
                     type="password"
@@ -88,24 +82,17 @@ const Register = () => {
                     placeholder="Confirm Password"
                     value={form.confirmPassword}
                     onChange={handleChange}
-                    p={2}
-                    border="1px"
-                    borderRadius="md"
+                    variant="basic"
                 />
                 <Button
                     type="submit"
-                    p={2}
-                    bg="blue.500"
-                    color="white"
-                    borderRadius="md"
-                    _hover={{ bg: "blue.600" }}
-                    transition="background-color 0.2s"
+                    variant="blueButton"
                 >
                     Register
                 </Button>
             </Box>
             <Link href="/Account/Login">
-                <Button mt={4} p={2} bg="blue.500" color="white" borderRadius="md" _hover={{ bg: "blue.600" }} transition="background-color 0.2s">
+                <Button variant="blueButton">
                     Already have an account
                 </Button>
             </Link>

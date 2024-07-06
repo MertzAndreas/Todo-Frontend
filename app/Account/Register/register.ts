@@ -4,13 +4,14 @@ export const register = async (form : RegisterForm) => {
 
     const {confirmPassword, ...newForm} = form;
 
+    console.log(newForm)
+
     const res = await fetch('http://localhost:5040/Account/register', {
         method: 'POST',
-        credentials : 'include',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(newForm)
+        body: JSON.stringify(form)
     });
 
     if (!res.ok) {

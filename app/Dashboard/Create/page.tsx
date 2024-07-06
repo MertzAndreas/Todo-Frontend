@@ -62,7 +62,7 @@ const Login = () => {
 
     return (
         <Flex flexDirection="column" justifyContent="center" alignItems="center" height="100vh" bg="gray.200">
-            <Heading as="h1" size="2xl" mb={6}>Create Project</Heading>
+            <Heading variant="basic">Create Project</Heading>
             <Box as="form" onSubmit={handleSubmit} width="60%" p={8} bg="white" borderRadius="lg" shadow="lg" display="flex" flexDirection="column" gap={4}>
                 <Input
                     type="text"
@@ -70,40 +70,25 @@ const Login = () => {
                     placeholder="Cool Project Name"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    p={2}
-                    border="1px"
-                    borderRadius="md"
+                    variant={"basic"}
                 />
                 <Textarea
                     name="description"
                     placeholder="Project Description"
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    p={2}
-                    border="1px"
-                    borderRadius="md"
+                    variant={"basic"}
                 />
                 <Button
                     type="submit"
-                    p={2}
-                    bg="blue.500"
-                    color="white"
-                    borderRadius="md"
-                    _hover={{ bg: "blue.600" }}
-                    transition="background-color 0.2s"
+                    variant="blueButton"
                 >
                     Create Project
                 </Button>
             </Box>
             <Link href="/Dashboard">
                 <Button
-                    mt={4}
-                    p={2}
-                    bg="gray.400"
-                    color="white"
-                    borderRadius="md"
-                    _hover={{ bg: "blue.600" }}
-                    transition="background-color 0.2s"
+                    variant="greyButton"
                 >
                     Go Back
                 </Button>
