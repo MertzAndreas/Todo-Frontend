@@ -14,13 +14,13 @@ interface PageProps {
 
 export type AssignedTo = {
     Initials: string;
-    Color: string;
+    Color: string
 }
 
-export type TaskListTask = {
+export type Todo = {
     Id: number;
     Title: string;
-    Date: Date;
+    DueDate: Date;
     SVG: number;
     AssignedTo: AssignedTo[];
 }
@@ -28,7 +28,7 @@ export type TaskListTask = {
 export type TaskList = {
     id: number;
     name: string;
-    tasks: TaskListTask[];
+    tasks: Todo[];
 }
 
 
@@ -40,7 +40,15 @@ const Page = ({ params : {projectId} } : PageProps) => {
 
 
     useEffect(() => {
-        // Simulate fetching data from the backend
+        fetch("http://localhost:5040/api/Project/project_overview/" + projectId, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(res => res.json())
+            .then(data => console.log(data))
         const pseudoData: TaskList[] = [
             {
                 id: 1,
@@ -49,14 +57,14 @@ const Page = ({ params : {projectId} } : PageProps) => {
                     {
                         Id: 1,
                         Title: "Design Landing Page ewin ewnin wnnew",
-                        Date: new Date(1720535296000),
+                        DueDate: new Date(1720535296000),
                         SVG: 2,
                         AssignedTo: [{ Initials: "AB", Color: "red" }, { Initials: "CD", Color: "blue" }]
                     },
                     {
                         Id: 2,
                         Title: "Set Up Database",
-                        Date: new Date(1722176896000),
+                        DueDate: new Date(1722176896000),
                         SVG: 4,
                         AssignedTo: [{ Initials: "EF", Color: "green" }]
                     }
@@ -69,7 +77,7 @@ const Page = ({ params : {projectId} } : PageProps) => {
                     {
                         Id: 3,
                         Title: "Develop Authentication",
-                        Date: new Date(1720103296000),
+                        DueDate: new Date(1720103296000),
                         SVG: 4,
                         AssignedTo: [{ Initials: "GH", Color: "purple" }]
                     }
@@ -82,7 +90,7 @@ const Page = ({ params : {projectId} } : PageProps) => {
                     {
                         Id: 4,
                         Title: "Write Unit Tests",
-                        Date: new Date(1720283296000),
+                        DueDate: new Date(1720283296000),
                         SVG: 1,
                         AssignedTo: [{ Initials: "IJ", Color: "orange" }]
                     }
@@ -95,7 +103,7 @@ const Page = ({ params : {projectId} } : PageProps) => {
                     {
                         Id: 4,
                         Title: "Write Unit Tests",
-                        Date: new Date(1720283296000),
+                        DueDate: new Date(1720283296000),
                         SVG: 1,
                         AssignedTo: [{ Initials: "IJ", Color: "orange" }]
                     }
@@ -108,7 +116,7 @@ const Page = ({ params : {projectId} } : PageProps) => {
                     {
                         Id: 4,
                         Title: "Write Unit Tests",
-                        Date: new Date(1720283296000),
+                        DueDate: new Date(1720283296000),
                         SVG: 1,
                         AssignedTo: [{ Initials: "IJ", Color: "orange" }]
                     }
