@@ -1,10 +1,11 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import Link from "next/link";
 import { useToken } from '@/hooks/useToken';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from "next/navigation";
 import {login} from "@/app/Account/Login/login";
+import {Box, Button, Flex, Heading, Input} from "@chakra-ui/react";
 
 export type LoginForm = {
     email: string;
@@ -44,37 +45,47 @@ const Login = () => {
     };
 
     return (
-        <div className="flex flex-col justify-center items-center h-screen bg-gray-200">
-            <h1 className="text-4xl font-bold mb-6">Login to your Account</h1>
-            <form onSubmit={handleSubmit} autoComplete="on" className="flex flex-col w-3/5 gap-4 p-8 bg-white rounded-t-lg shadow-lg">
-                <input
+        <Flex flexDirection="column" justifyContent="center" alignItems="center" height="100vh" bg="gray.200">
+            <Heading as="h1" size="2xl" mb={6}>Login to your Account</Heading>
+            <Box as="form" onSubmit={handleSubmit} width="60%" p={8} bg="white" borderRadius="lg" shadow="lg" display="flex" flexDirection="column" gap={4}>
+                <Input
                     type="email"
                     name="email"
                     placeholder="Email"
                     value={form.email}
                     onChange={handleChange}
-                    className="p-2 border rounded"
+                    p={2}
+                    border="1px"
+                    borderRadius="md"
                 />
-                <input
+                <Input
                     type="password"
                     name="password"
                     placeholder="Password"
                     value={form.password}
                     onChange={handleChange}
-                    className="p-2 border rounded"
+                    p={2}
+                    border="1px"
+                    borderRadius="md"
                 />
-                <button
+                <Button
                     type="submit"
-                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                    p={2}
+                    bg="blue.500"
+                    color="white"
+                    borderRadius="md"
+                    _hover={{ bg: "blue.600" }}
+                    transition="background-color 0.2s"
                 >
                     Login
-                </button>
-                {error && <p className="text-red-500">Error: {error.message}</p>}
-            </form>
-            <Link href="/app/Account/Register">
-                <button className="p-2 bg-neutral-400 text-white rounded hover:bg-blue-600 transition-colors mt-4">Sign Up</button>
+                </Button>
+            </Box>
+            <Link href="/Account/Register">
+                <Button mt={4} p={2} bg="gray.400" color="white" borderRadius="md" _hover={{ bg: "blue.600" }} transition="background-color 0.2s">
+                    Sign Up
+                </Button>
             </Link>
-        </div>
+        </Flex>
     );
 };
 

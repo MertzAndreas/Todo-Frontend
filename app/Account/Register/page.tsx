@@ -5,6 +5,7 @@ import Link from "next/link";
 import {useToken} from "@/hooks/useToken";
 import {useMutation} from "@tanstack/react-query";
 import {register} from "@/app/Account/Register/register";
+import {Box, Button, Flex, Heading, Input} from "@chakra-ui/react";
 
 export type RegisterForm = {
     username: string;
@@ -48,52 +49,67 @@ const Register = () => {
     }
 
     return (
-        <div className="flex flex-col justify-center items-center h-screen bg-gray-200">
-            <h1 className="text-4xl font-bold mb-6">Register Account</h1>
-    <form onSubmit={handleSubmit} autoComplete={"on"} className="flex flex-col w-3/5 gap-4 p-8 bg-white rounded-t-lg shadow-lg">
-        <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={form.username}
-            onChange={handleChange}
-            className="p-2 border rounded"
-        />
-        <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            className="p-2 border rounded"
-            />
-        <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            className="p-2 border rounded"
-        />
-        <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            className="p-2 border rounded"
-        />
-        <button
-            type="submit"
-            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
-            Register
-        </button>
-    </form>
-            <Link href={"/Account/Login"}>
-                <button type="submit" className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">Already have an account</button>
+        <Flex flexDirection="column" justifyContent="center" alignItems="center" height="100vh" bg="gray.200">
+            <Heading as="h1" size="2xl" mb={6}>Register Account</Heading>
+            <Box as="form" onSubmit={handleSubmit} width="60%" p={8} bg="white" borderRadius="lg" shadow="lg" display="flex" flexDirection="column" gap={4}>
+                <Input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    value={form.username}
+                    onChange={handleChange}
+                    p={2}
+                    border="1px"
+                    borderRadius="md"
+                />
+                <Input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={form.email}
+                    onChange={handleChange}
+                    p={2}
+                    border="1px"
+                    borderRadius="md"
+                />
+                <Input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={form.password}
+                    onChange={handleChange}
+                    p={2}
+                    border="1px"
+                    borderRadius="md"
+                />
+                <Input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                    value={form.confirmPassword}
+                    onChange={handleChange}
+                    p={2}
+                    border="1px"
+                    borderRadius="md"
+                />
+                <Button
+                    type="submit"
+                    p={2}
+                    bg="blue.500"
+                    color="white"
+                    borderRadius="md"
+                    _hover={{ bg: "blue.600" }}
+                    transition="background-color 0.2s"
+                >
+                    Register
+                </Button>
+            </Box>
+            <Link href="/Account/Login">
+                <Button mt={4} p={2} bg="blue.500" color="white" borderRadius="md" _hover={{ bg: "blue.600" }} transition="background-color 0.2s">
+                    Already have an account
+                </Button>
             </Link>
-</div>
+        </Flex>
     );
 };
 

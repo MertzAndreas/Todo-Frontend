@@ -1,15 +1,38 @@
-import Link from "next/link";
+    import Link from "next/link";
+import {Box, Button, Flex, Heading, Stack, Text} from "@chakra-ui/react";
 export default function Home() {
   return (
-    <div>
-      <h1>Welcome to our website!</h1>
-      <p>Some information about the website...</p>
-      <Link href="/Account/Login">
-        Login
-      </Link>
-      <Link href="/Account/Register">
-        Register
-      </Link>
-    </div>
+      <Flex flexDirection="column" justifyContent="center" alignItems="center" height="100vh" bg="gray.200">
+          <Box textAlign="center" p={8} bg="white" borderRadius="lg" shadow="lg" width="60%">
+              <Heading as="h1" size="2xl" mb={6}>Welcome to BaconTodo!</Heading>
+              <Text mb={8}>Some information about the website...</Text>
+              <Stack spacing={8} direction='row' justifyContent='center'>
+                  <Link href='/Account/Login'>
+                      <Button
+                          p={2}
+                          bg="blue.500"
+                          color="white"
+                          borderRadius="md"
+                          _hover={{ bg: "blue.600" }}
+                          transition="background-color 0.2s"
+                      >
+                          Login
+                      </Button>
+                  </Link>
+                  <Link href="/Account/Register">
+                      <Button
+                          p={2}
+                          bg="blue.500"
+                          color="white"
+                          borderRadius="md"
+                          _hover={{ bg: "blue.600" }}
+                          transition="background-color 0.2s"
+                      >
+                          Register
+                      </Button>
+                  </Link>
+              </Stack>
+          </Box>
+      </Flex>
   );
 }

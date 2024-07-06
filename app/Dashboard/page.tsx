@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useToken } from "@/hooks/useToken";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {Box, Button, Flex, Heading, Text} from "@chakra-ui/react";
 
 interface Project {
     projectId: number;
@@ -77,32 +78,33 @@ const Page = () => {
     if (error) return <p>Error loading projects</p>;
 
     return (
-        <div className="flex flex-col justify-center items-center h-screen bg-gray-200">
+        <Flex flexDirection="column" justifyContent="center" alignItems="center" height="100vh" bg="gray.200">
             {projects.length > 0 ? (
                 projects.map((project) => (
-                    <div key={project.projectId} className="bg-white p-6 mb-4 rounded-lg shadow-md">
-                        <h2 className="text-xl font-bold">{project.name}</h2>
-                        <p className="text-gray-700">{project.description}</p>
-                        <p className="text-gray-500">Created by: {project.creatorName}</p>
-                        <p className="text-gray-500">Team size: {project.teamSize}</p>
-                        <Link href={`/Dashboard/${project.projectId}`} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
-                            View Project
+                    <Box key={project.projectId} bg="white" p={6} mb={4} borderRadius="lg" shadow="md" width="60%">
+                        <Heading as="h2" size="lg" mb={2}>{project.name}</Heading>
+                        <Text mb={2} color="gray.700">{project.description}</Text>
+                        <Text mb={1} color="gray.500">Created by: {project.creatorName}</Text>
+                        <Text mb={4} color="gray.500">Team size: {project.teamSize}</Text>
+                        <Link href={`/Dashboard/${project.projectId}`} >
+                            <Button bg="blue.500" color="white" mr={2} _hover={{ bg: "blue.600" }}>
+                                View Project
+                            </Button>
                         </Link>
-                        <button
-                            onClick={() => mutate({ projectId: project.projectId, getToken })}
-                            className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
-                        >
+                        <Button onClick={() => mutate({ projectId: project.projectId, getToken})} bg="red.500" color="white" _hover={{ bg: "red.600" }}>
                             Delete Project
-                        </button>
-                    </div>
+                        </Button>
+                    </Box>
                 ))
             ) : (
-                <p className="text-gray-700">No projects available.</p>
+                <Text color="gray.700">No projects available.</Text>
             )}
-            <Link href="Dashboard/Create" className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
-                Create new Project
+            <Link href="/Dashboard/Create">
+                <Button mt={4} bg="blue.500" color="white" _hover={{ bg: "blue.600" }}>
+                    Create new Project
+                </Button>
             </Link>
-        </div>
+        </Flex>
     );
 };
 
