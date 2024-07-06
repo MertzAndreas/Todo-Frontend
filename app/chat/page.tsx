@@ -51,7 +51,7 @@ const Chat: React.FC = () => {
     return (
         <Box p={8} bg="gray.100" minHeight="100vh">
             <Box mb={8}>
-                <Heading as="h2" size="lg" mb={4}>Message History</Heading>
+                <Heading variant="basic">Message History</Heading>
                 <List spacing={3}>
                     {messages.map((message, index) => (
                         <ListItem key={index} border="1px" borderColor="gray.200" borderRadius="md" p={4} bg="white">
@@ -76,7 +76,7 @@ const Chat: React.FC = () => {
                             _placeholder={{ color: 'gray.400' }}
                         />
                     </FormControl>
-                    <Button type="submit" variant="bluebutton">
+                    <Button type="submit" variant="blueButton">
                         Send
                     </Button>
             </Box>

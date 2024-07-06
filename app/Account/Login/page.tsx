@@ -54,7 +54,9 @@ const Login = () => {
                     placeholder="Email"
                     value={form.email}
                     onChange={handleChange}
-                    variant="basic"
+                    p={2}
+                    border= "1px"
+                    borderRadius="md"
                 />
                 <Input
                     type="password"
@@ -62,7 +64,9 @@ const Login = () => {
                     placeholder="Password"
                     value={form.password}
                     onChange={handleChange}
-                    variant="basic"
+                    p={2}
+                    border= "1px"
+                    borderRadius="md"
                 />
                 <Button
                     type="submit"

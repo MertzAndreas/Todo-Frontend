@@ -17,28 +17,26 @@ const theme = extendTheme({
             },
             variants: {
                 greyButton: {
-                    bg: 'gray.400',
+                    bg: 'gray',
                     color: 'white',
                     _hover: {
-                        bg: 'blue.600',
-                    },
-                    transition: "background-color 0.2s",mt: 4,
-                    p: 2,
-                },
-                blueButton: {
-                    bg: 'blue.500',
-                    color: 'white',
-                    _hover: {
-                        bg: 'blue.600',
+                        bg: 'blue',
                     },
                     transition: "background-color 0.2s",
-                    mt: 4,
-                    p: 2,
+                },
+                blueButton: {
+                    bg: 'lightBlue',
+                    color: 'white',
+                    _hover: {
+                        bg: 'blue',
+                    },
+                    transition: "background-color 0.2s",
                 },
                 redButton:{
-                    bg:"red.500",
+                    bg:"red",
                     color:"white",
-                    _hover:{ bg: "red.600" },
+                    _hover:{ bg: "darkRed" },
+                    transition: "background-color 0.2s",
                 },
             },
             defaultProps: {
@@ -53,19 +51,6 @@ const theme = extendTheme({
                     border: "1px",
                     borderRadius:"md",
                 }
-            },
-            defaultProps: {
-                variant: 'basic'
-            },
-        },
-        Input: {
-            variants: {
-                basic: {
-                    p: 2,
-                    border: "1px",
-                    borderRadius:"md",
-                }
-
             },
             defaultProps: {
                 variant: 'basic'
@@ -90,8 +75,39 @@ const theme = extendTheme({
         },
     },
     colors: {
-
-    }
+        blue: "#4740FE",
+        lightBlue: "#4D8AF0",
+        red: "#DA2F2F",
+        darkRed: "#A02C2C",
+        gray: "#AFAFAF",
+        darkGray: "#5c5c5c",
+        green: "#50AF27",
+        yellow: "#E7EE16",
+        purple: "#A02CFF",
+        pink: "#FF2CFF",
+        cyan: "#2CFFD9",
+        teal: "#2CFFB4",
+        orange: "#FF8C2C",
+        black: "#000000",
+        white: "#FFFFFF",
+    },
+    bg: {
+        blue: "#4740FE",
+        lightBlue: "#4D8AF0",
+        red: "#DA2F2F",
+        darkRed: "#A02C2C",
+        gray: "#AFAFAF",
+        darkGray: "#5c5c5c",
+        green: "#50AF27",
+        yellow: "#E7EE16",
+        purple: "#A02CFF",
+        pink: "#FF2CFF",
+        cyan: "#2CFFD9",
+        teal: "#2CFFB4",
+        orange: "#FF8C2C",
+        black: "#000000",
+        white: "#FFFFFF",
+    },
 });
 
 export default theme;
