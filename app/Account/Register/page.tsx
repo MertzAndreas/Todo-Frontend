@@ -2,9 +2,11 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from "next/navigation";
 import Link from "next/link";
-import {useToken} from "@/app/hooks/useToken";
+import {useToken} from "@/hooks/useToken";
+import {useMutation} from "@tanstack/react-query";
+import {register} from "@/app/Account/Register/register";
 
-type RegisterForm = {
+export type RegisterForm = {
     username: string;
     email: string;
     password: string;
@@ -12,8 +14,8 @@ type RegisterForm = {
 }
 
 const Register = () => {
-    const router = useRouter();
     const { validateAndRefreshToken } = useToken('','/chat');
+    const router = useRouter();
     const [form, setForm] = useState<RegisterForm>({
         username: '',
         email: '',
@@ -21,6 +23,16 @@ const Register = () => {
         confirmPassword: ''
     });
 
+    const { mutate } = useMutation( {
+        mutationFn: register,
+        onSuccess: (data) => {
+            localStorage.setItem('token', data.accessToken);
+            router.push('/chat');
+        },
+        onError: (error) => {
+            console.error('Mutation error:', error);
+        },
+    });
 
     useEffect(() => {
         validateAndRefreshToken();
@@ -30,35 +42,15 @@ const Register = () => {
         setForm({...form, [e.target.name]: e.target.value});
     }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        try {
-            const res = await fetch('http://localhost:5040/Account/register', {
-                method: 'POST',
-                credentials : 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(form)
-            });
-            console.log(res);
-
-            if (res.ok) {
-                const data = await res.json();
-                localStorage.setItem('token', data.accessToken);
-                router.push('/chat');
-            } else {
-                console.error('Registration failed:', res.statusText);
-            }
-        } catch (error) {
-            console.error('An error occurred:', error);
-        }
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        mutate({...form})
     }
-    
+
     return (
         <div className="flex flex-col justify-center items-center h-screen bg-gray-200">
             <h1 className="text-4xl font-bold mb-6">Register Account</h1>
-    <form onSubmit={handleSubmit} className="flex flex-col w-3/5 gap-4 p-8 bg-white rounded-t-lg shadow-lg">
+    <form onSubmit={handleSubmit} autoComplete={"on"} className="flex flex-col w-3/5 gap-4 p-8 bg-white rounded-t-lg shadow-lg">
         <input
             type="text"
             name="username"

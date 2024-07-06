@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { isTokenExpired } from '@/app/utils/isTokenExpired';
+import { isTokenExpired } from '@/utils/isTokenExpired';
 
 
 const fetchNewToken = async () => {
@@ -28,17 +28,16 @@ export const useToken = (failRouterUrl?: string, successRouterUrl?: string) => {
     }, [router]);
 
     const refreshAccessToken = useCallback(async () => {
+        let newToken;
         try {
-            const newToken = await fetchNewToken();
+            newToken = await fetchNewToken();
             localStorage.setItem('token', newToken);
             handleNavigation(successRouterUrl);
             return newToken;
             }
         catch (error) {
-            console.error('Error refreshing access token:', error);
             localStorage.removeItem('token')
             handleNavigation(failRouterUrl);
-            throw error;
         }
     }, [failRouterUrl, successRouterUrl, handleNavigation]);
 

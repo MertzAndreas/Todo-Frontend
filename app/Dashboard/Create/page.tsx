@@ -1,9 +1,10 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useToken } from "@/app/hooks/useToken";
-import {getUserIdFromToken} from "@/app/utils/isTokenExpired";
+import { useToken } from "@/hooks/useToken";
+import {getUserIdFromToken} from "@/utils/isTokenExpired";
+import {useQueryClient} from "@tanstack/react-query";
 
 type CreateProject = {
     name: string;
@@ -13,7 +14,8 @@ type CreateProject = {
 
 const Login = () => {
     const router = useRouter();
-    const { validateAndRefreshToken, getToken } = useToken("Account/Login");
+    const queryClient = useQueryClient();
+    const { getToken } = useToken("Account/Login");
     const [form, setForm] = useState<CreateProject>(() => {
         const id = getUserIdFromToken();
         if (!id) {
@@ -44,6 +46,13 @@ const Login = () => {
                 },
                 body: JSON.stringify(form),
             });
+
+            if(!res.ok){
+                throw new Error("Failed to create project");
+            }
+
+            await queryClient.invalidateQueries({queryKey: ['projects']});
+            router.push('/Dashboard');
         }
         catch (e) {
             console.error(e);

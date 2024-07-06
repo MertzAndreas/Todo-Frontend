@@ -5,15 +5,15 @@ import {
     HubConnectionState,
     LogLevel,
 } from '@microsoft/signalr';
-import { useToken } from '@/app/hooks/useToken';
+import { useToken } from '@/hooks/useToken';
 
 export const useSignalR = (hubUrl?: string) => {
     const [isConnected, setIsConnected] = useState(false);
     const { getToken } = useToken();
 
     const connectionRef = useRef<HubConnection | null>(null);
-    let didInit = false
 
+    let didInit = false
     useEffect(() => {
         const initializeConnection = async () => {
             if(didInit) return;

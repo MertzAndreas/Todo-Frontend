@@ -1,6 +1,6 @@
 "use client"
 import React, { FormEvent, useEffect, useState } from "react";
-import {useSignalR} from "@/app/hooks/useSignalR";
+import {useSignalR} from "@/hooks/useSignalR";
 
 type Message = {
     senderId: string;

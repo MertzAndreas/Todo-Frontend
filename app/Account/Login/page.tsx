@@ -1,13 +1,15 @@
 "use client"
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useToken } from '@/hooks/useToken';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useToken } from "@/app/hooks/useToken";
+import {login} from "@/app/Account/Login/login";
 
-type LoginForm = {
+export type LoginForm = {
     email: string;
     password: string;
-}
+};
 
 const Login = () => {
     const router = useRouter();
@@ -16,42 +18,35 @@ const Login = () => {
         email: '',
         password: '',
     });
+
+    const { mutate, error } = useMutation( {
+        mutationFn: login,
+        onSuccess: (data) => {
+            localStorage.setItem('token', data.accessToken);
+            router.push('/chat');
+        },
+        onError: (error) => {
+            console.error('Mutation error:', error);
+        },
+    });
+
     useEffect(() => {
         validateAndRefreshToken();
     }, [validateAndRefreshToken]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
-    }
+    };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        try {
-            const res = await fetch('http://localhost:5040/Account/login', {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(form),
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                localStorage.setItem('token', data.accessToken);
-                router.push('/chat');
-            } else {
-                console.error('Login failed:', res.statusText);
-            }
-        } catch (error) {
-            console.error('An error occurred:', error);
-        }
-    }
+    const handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+        mutate({ ...form});
+    };
 
     return (
         <div className="flex flex-col justify-center items-center h-screen bg-gray-200">
             <h1 className="text-4xl font-bold mb-6">Login to your Account</h1>
-            <form onSubmit={handleSubmit} className="flex flex-col w-3/5 gap-4 p-8 bg-white rounded-t-lg shadow-lg">
+            <form onSubmit={handleSubmit} autoComplete="on" className="flex flex-col w-3/5 gap-4 p-8 bg-white rounded-t-lg shadow-lg">
                 <input
                     type="email"
                     name="email"
@@ -74,9 +69,10 @@ const Login = () => {
                 >
                     Login
                 </button>
+                {error && <p className="text-red-500">Error: {error.message}</p>}
             </form>
-            <Link href={"/Account/Register"}>
-                <button className="p-2 bg-neutral-400 text-white rounded hover:bg-blue-600 transition-colors">Sign Up</button>
+            <Link href="/app/Account/Register">
+                <button className="p-2 bg-neutral-400 text-white rounded hover:bg-blue-600 transition-colors mt-4">Sign Up</button>
             </Link>
         </div>
     );

@@ -22,7 +22,6 @@ export const getUserIdFromToken = () => {
 export const isTokenExpired = (token: string) => {
     try {
         const decodedToken: DecodedToken = JSON.parse(atob(token.split('.')[1]));
-        console.log(decodedToken);
         const expiration = decodedToken.exp;
         const currentTimestamp = Math.floor(new Date().getTime() / 1000);
         return currentTimestamp > expiration;
