@@ -24,13 +24,6 @@ export default function Home() {
                   </Link>
               </Stack>
           </Box>
-          <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="50,10 85,85 15,85" fill="blue" stroke="black" stroke-width="2"/>
-              <line x1="50" y1="10" x2="50" y2="85" stroke="black" stroke-width="2"/>
-              <line x1="15" y1="85" x2="85" y2="85" stroke="black" stroke-width="2"/>
-          </svg>
-
-
       </Flex>
   );
 }

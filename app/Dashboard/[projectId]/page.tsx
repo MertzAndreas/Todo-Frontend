@@ -2,9 +2,8 @@
 import React, {useEffect, useState} from 'react';
 import {notFound} from "next/navigation";
 import {useSignalR} from "@/hooks/useSignalR";
-import {Container, Flex, HStack} from "@chakra-ui/react";
+import {Flex} from "@chakra-ui/react";
 import Tasklist from "@/components/tasklist";
-import {AcornIcon} from "@/utils/icons";
 
 interface PageProps {
     params: {
@@ -89,11 +88,11 @@ const Page = ({ params : {projectId} } : PageProps) => {
                 ]
             },
             {
-                id: 3,
+                id: 4,
                 name: "Completed",
                 tasks: [
                     {
-                        Id: 4,
+                        Id: 5,
                         Title: "Write Unit Tests",
                         Date: new Date(1720283296000),
                         SVG: 1,
@@ -102,11 +101,11 @@ const Page = ({ params : {projectId} } : PageProps) => {
                 ]
             },
             {
-                id: 3,
+                id: 5,
                 name: "Completed",
                 tasks: [
                     {
-                        Id: 4,
+                        Id: 6,
                         Title: "Write Unit Tests",
                         Date: new Date(1720283296000),
                         SVG: 1,

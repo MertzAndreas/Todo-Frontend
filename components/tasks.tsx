@@ -4,14 +4,18 @@ import {Card, CardBody, CardHeader, Flex, Heading, Text} from "@chakra-ui/react"
 import formatDateOrCountdown from "@/utils/formatDateOrCountdown";
 import {getIconById} from "@/utils/idToSVG";
 
+type TaskProps = {
+    task: TaskListTask;
+    onDragStart: (e : React.DragEvent<HTMLElement>, todoId : number) => void;
+};
 
-
-export const Task = ({task: {Title, Date, SVG, AssignedTo}}  : {task : TaskListTask}) => {
+export const Task: React.FC<TaskProps> = ({ task, onDragStart }) => {
+    const { Title, Date, SVG, AssignedTo } = task;
 
     return (
-        <Card size="md" draggable="true">
+        <Card size="md" draggable="true" onDragStart={(e) => onDragStart(e, task.Id)}>
             <CardBody>
-                    <Heading className={"break-all"} size="md">{Title}</Heading>
+                <Heading className={"break-all"} size="md">{Title}</Heading>
                 <Text>{formatDateOrCountdown(Date)}</Text>
                 <Flex flexDirection="row" justifyContent="space-between">
                     <Text>{AssignedTo.map(assignee => assignee.Initials).join(', ')}</Text>
