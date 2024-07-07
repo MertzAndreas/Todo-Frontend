@@ -2,8 +2,9 @@
 import React, {useEffect, useState} from 'react';
 import {notFound} from "next/navigation";
 import {useSignalR} from "@/hooks/useSignalR";
-import {Flex} from "@chakra-ui/react";
+import {Flex, getToken} from "@chakra-ui/react";
 import Tasklist from "@/components/tasklist";
+import {useToken} from "@/hooks/useToken";
 
 interface PageProps {
     params: {
@@ -34,20 +35,27 @@ export type TaskList = {
 const Page = ({ params : {projectId} } : PageProps) => {
     if(isNaN(projectId)) notFound();
 
+    console.log(projectId)
     const [taskLists, setTaskLists] = useState<TaskList[]>([])
     const [connection, isConnected] = useSignalR()
-
+    const {getToken } = useToken()
 
     useEffect(() => {
-        fetch("http://localhost:5040/api/Project/project_overview/" + projectId, {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-            .then(res => res.json())
-            .then(data => console.log(data))
+        const penis = async () => {
+            fetch("http://localhost:5040/api/Project/project_overview/51", {
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + await getToken()
+                },
+            })
+                .then(res => res.json())
+                .then(data => console.log(data))
+        }
+
+        penis();
+
+
         const pseudoData: TaskList[] = [
             {
                 id: 1,
