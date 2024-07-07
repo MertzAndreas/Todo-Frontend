@@ -78,7 +78,7 @@ const Page = () => {
     if (error) return <p>Error loading projects</p>;
 
     return (
-        <Flex flexDirection="column" justifyContent="center" alignItems="center" height="100" bg="gray.200">
+        <Flex flexDirection="column" justifyContent="center" alignItems="center" bg="gray.200">
             {projects.length > 0 ? (
                 projects.map((project) => (
                     <Box key={project.projectId} bg="white" p={6} mb={4} borderRadius="lg" shadow="md" width="60%">

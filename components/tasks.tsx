@@ -10,16 +10,17 @@ type TaskProps = {
 };
 
 export const Task: React.FC<TaskProps> = ({ task, onDragStart }) => {
-    const { Title, DueDate, SVG, AssignedTo } = task;
+    const { title, dueDate, svg, assignedInitials } = task;
 
+    console.log(dueDate)
     return (
-        <Card size="md" draggable="true" onDragStart={(e) => onDragStart(e, task.Id)}>
+        <Card size="md" draggable="true" onDragStart={(e) => onDragStart(e, task.taskId)}>
             <CardBody>
-                <Heading className={"break-all"} size="md">{Title}</Heading>
-                <Text>{formatDateOrCountdown(DueDate)}</Text>
+                <Heading className={"break-all"} size="md">{title}</Heading>
+                <Text>{formatDateOrCountdown(dueDate)}</Text>
                 <Flex flexDirection="row" justifyContent="space-between">
-                    <Text>{AssignedTo.map(assignee => assignee.Initials).join(', ')}</Text>
-                    <Text>{getIconById(SVG, "2rem", "2rem")}</Text>
+                    <Text>{assignedInitials.map(assignee => assignee).join(', ')}</Text>
+                    <Text>{getIconById(svg, "2rem", "2rem")}</Text>
                 </Flex>
             </CardBody>
         </Card>
