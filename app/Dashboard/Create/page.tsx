@@ -70,7 +70,9 @@ const Login = () => {
                     placeholder="Cool Project Name"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    variant={"basic"}
+                    p={2}
+                    border= "1px"
+                    borderRadius="md"
                 />
                 <Textarea
                     name="description"

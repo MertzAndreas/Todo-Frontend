@@ -56,19 +56,6 @@ const theme = extendTheme({
                 variant: 'basic'
             },
         },
-        Input: {
-            variants: {
-                basic: {
-                    p: 2,
-                    border: "1px",
-                    borderRadius:"md",
-                }
-
-            },
-            defaultProps: {
-                variant: 'basic'
-            },
-        },
     },
     colors: {
         blue: "#4740FE",

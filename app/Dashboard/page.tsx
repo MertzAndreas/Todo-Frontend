@@ -4,6 +4,7 @@ import { useToken } from "@/hooks/useToken";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {Box, Button, Flex, Heading, Text} from "@chakra-ui/react";
+import ChatDrawer from "@/components/ChatDrawer";
 
 interface Project {
     projectId: number;
@@ -78,6 +79,7 @@ const Page = () => {
     if (error) return <p>Error loading projects</p>;
 
     return (
+        <>
         <Flex flexDirection="column" justifyContent="center" alignItems="center" height="100" bg="gray.200">
             {projects.length > 0 ? (
                 projects.map((project) => (
@@ -105,6 +107,8 @@ const Page = () => {
                 </Button>
             </Link>
         </Flex>
+            <ChatDrawer />
+        </>
     );
 };
 

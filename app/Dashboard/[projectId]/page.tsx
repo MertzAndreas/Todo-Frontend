@@ -5,6 +5,7 @@ import {useSignalR} from "@/hooks/useSignalR";
 import {Flex, getToken} from "@chakra-ui/react";
 import Tasklist from "@/components/tasklist";
 import {useToken} from "@/hooks/useToken";
+import ChatDrawer from "@/components/ChatDrawer";
 
 interface PageProps {
     params: {
@@ -42,7 +43,7 @@ const Page = ({ params : {projectId} } : PageProps) => {
 
     useEffect(() => {
         const penis = async () => {
-            fetch("http://localhost:5040/api/Project/project_overview/51", {
+            fetch("http://localhost:5040/api/Project/project_overview/" + projectId, {
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
@@ -137,9 +138,12 @@ const Page = ({ params : {projectId} } : PageProps) => {
     if(!isConnected) return <h1>Connecting...</h1>
 
     return (
+        <>
         <Flex gap={"2rem"} alignItems={"start"} overflowX={"scroll"} height="100%">
             {taskLists.map(list => <Tasklist taskList={list} key={list.id}/>)}
         </Flex>
+            <ChatDrawer />
+        </>
     );
 };
 
