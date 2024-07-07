@@ -73,6 +73,7 @@ const theme = extendTheme({
         orange: "#FF8C2C",
         black: "#000000",
         white: "#FFFFFF",
+        babyBlue: "#E6F0FF",
     },
     bg: {
         blue: "#4740FE",
@@ -90,6 +91,7 @@ const theme = extendTheme({
         orange: "#FF8C2C",
         black: "#000000",
         white: "#FFFFFF",
+        babyBlue: "#E6F0FF",
     },
 });
 
