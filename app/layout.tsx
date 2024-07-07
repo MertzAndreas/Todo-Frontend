@@ -1,7 +1,7 @@
 import type {Metadata} from "next";
 import {Inter} from "next/font/google";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
-import {ChakraProvider, Container} from '@chakra-ui/react';
+import {ChakraProvider} from '@chakra-ui/react';
 import Navbar from "@/components/Navbar";
 import theme from "@/theme";
 
@@ -19,8 +19,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" style={{ height: "100%" }}>
-        <body className={`${inter.className}`} style={{ height: "100%" }}>
+        <html lang="en">
+        <body className={`${inter.className}`}>
         <ReactQueryProvider>
             <ChakraProvider theme={theme}>
                 <Navbar/>
