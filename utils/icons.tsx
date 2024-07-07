@@ -1,7 +1,7 @@
 // MyIcon.tsx
 import React from 'react';
 
-export const AcornIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const AcornIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path d="M216 112v16c0 53-88 88-88 112c0-24-88-59-88-112v-16Z" opacity={0.2}></path>
@@ -12,7 +12,7 @@ export const AcornIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1e
 );
 
 
-export const BandAidIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const BandAidIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path
@@ -23,7 +23,7 @@ export const BandAidIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "
         </g>
     </svg>
 );
-export const BabyIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const BabyIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path d="M224 128a96 96 0 1 1-96-96a96 96 0 0 1 96 96" opacity={0.2}></path>
@@ -34,7 +34,7 @@ export const BabyIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em
 
 );
 
-export const HorseIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const HorseIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path
@@ -45,7 +45,7 @@ export const HorseIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1e
         </g>
     </svg>
 );
-export const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path d="M208 88h-56V32Z" opacity={0.2}></path>
@@ -56,7 +56,7 @@ export const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em
 );
 
 
-export const BirdIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const BirdIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path
@@ -68,7 +68,7 @@ export const BirdIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em
     </svg>
 );
 
-export const TrashBinIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const TrashBinIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path d="M200 56v152a8 8 0 0 1-8 8H64a8 8 0 0 1-8-8V56Z" opacity="0.2"/>
@@ -78,7 +78,7 @@ export const TrashBinIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = 
     </svg>
 );
 
-export const WheelchairIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const WheelchairIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path d="M200 48a24 24 0 1 1-24-24a24 24 0 0 1 24 24" opacity="0.2"/>
@@ -88,7 +88,7 @@ export const WheelchairIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width 
     </svg>
 );
 
-export const StarIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const StarIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path
@@ -100,7 +100,7 @@ export const StarIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em
     </svg>
 );
 
-export const MicroscopeIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const MicroscopeIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path d="M136 32v104a8 8 0 0 1-8 8H80a8 8 0 0 1-8-8V32a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8" opacity="0.2"/>
@@ -110,7 +110,7 @@ export const MicroscopeIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width 
     </svg>
 );
 
-export const SpeedometerIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const SpeedometerIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path
@@ -122,7 +122,7 @@ export const SpeedometerIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width
     </svg>
 );
 
-export const MonitorIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const MonitorIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path d="M224 64v112a16 16 0 0 1-16 16H48a16 16 0 0 1-16-16V64a16 16 0 0 1 16-16h160a16 16 0 0 1 16 16"
@@ -133,7 +133,7 @@ export const MonitorIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "
     </svg>
 );
 
-export const ProjectorIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const ProjectorIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path d="M208 72v112H48V72Z" opacity="0.2"/>
@@ -143,13 +143,25 @@ export const ProjectorIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width =
     </svg>
 );
 
-export const PackageIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({ width = "1em", height = "1em" }) => (
+export const PackageIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
         <g fill="currentColor">
             <path d="M128 129.09V232a8 8 0 0 1-3.84-1l-88-48.18a8 8 0 0 1-4.16-7V80.18a8 8 0 0 1 .7-3.25Z"
                   opacity="0.2"/>
             <path
                 d="m223.68 66.15l-88-48.15a15.88 15.88 0 0 0-15.36 0l-88 48.17a16 16 0 0 0-8.32 14v95.64a16 16 0 0 0 8.32 14l88 48.17a15.88 15.88 0 0 0 15.36 0l88-48.17a16 16 0 0 0 8.32-14V80.18a16 16 0 0 0-8.32-14.03M128 32l80.34 44l-29.77 16.3l-80.35-44Zm0 88L47.66 76l33.9-18.56l80.34 44ZM40 90l80 43.78v85.79l-80-43.75Zm176 85.78l-80 43.79v-85.75l32-17.51V152a8 8 0 0 0 16 0v-44.45L216 90v85.77Z"/>
+        </g>
+    </svg>
+);
+
+export const CatIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({width = "1em", height = "1em"}) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 256 256">
+        <g fill="currentColor">
+            <path
+                d="M224 48v88c0 48.6-43 88-96 88s-96-39.4-96-88V48a8 8 0 0 1 13.66-5.66L67.6 67.6a102.87 102.87 0 0 1 120.8 0l21.94-25.24A8 8 0 0 1 224 48"
+                opacity={0.2}></path>
+            <path
+                d="M96 140a12 12 0 1 1-12-12a12 12 0 0 1 12 12m76-12a12 12 0 1 0 12 12a12 12 0 0 0-12-12m60-80v88c0 52.93-46.65 96-104 96S24 188.93 24 136V48a16 16 0 0 1 27.31-11.31c.14.14.26.27.38.41L69 57a111.22 111.22 0 0 1 118.1 0l17.21-19.9c.12-.14.24-.27.38-.41A16 16 0 0 1 232 48m-16 0l-21.56 24.8a8 8 0 0 1-10.81 1.2A89 89 0 0 0 168 64.75V88a8 8 0 1 1-16 0V59.05a97.4 97.4 0 0 0-16-2.72V88a8 8 0 1 1-16 0V56.33a97.4 97.4 0 0 0-16 2.72V88a8 8 0 1 1-16 0V64.75A89 89 0 0 0 72.37 74a8 8 0 0 1-10.81-1.17L40 48v88c0 41.66 35.21 76 80 79.67v-20.36l-13.66-13.66a8 8 0 0 1 11.32-11.31L128 180.68l10.34-10.34a8 8 0 0 1 11.32 11.31L136 195.31v20.36c44.79-3.69 80-38 80-79.67Z"></path>
         </g>
     </svg>
 );

@@ -1,11 +1,16 @@
 "use client"
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {notFound} from "next/navigation";
 import {useSignalR} from "@/hooks/useSignalR";
-import {Flex} from "@chakra-ui/react";
+import {
+    Button,
+    Flex, 
+    useDisclosure
+} from "@chakra-ui/react";
 import Tasklist from "@/components/tasklist";
 import {useToken} from "@/hooks/useToken";
 import ChatDrawer from "@/components/ChatDrawer";
+import NewTaskModal from "@/app/Dashboard/[projectId]/NewTaskModal";
 
 interface PageProps {
     params: {
@@ -36,10 +41,12 @@ export type Project = {
 
 const Page = ({ params : {projectId} } : PageProps) => {
     if(isNaN(projectId)) notFound();
+    const { isOpen, onOpen, onClose } = useDisclosure()
     const [taskLists, setTaskLists] = useState<TaskList[]>([])
+    const [selectedTaskListId, setSelectedTaskListId] = useState<null | number>(null)
     const [connection, isConnected] = useSignalR()
     const {getToken } = useToken()
-
+    
     useEffect(() => {
         const fetchOverview = async () => {
             fetch("http://localhost:5040/api/Project/project_overview/" + projectId, {
@@ -59,15 +66,33 @@ const Page = ({ params : {projectId} } : PageProps) => {
         fetchOverview();
     }, []);
 
+    const openModalWithTaskListId = (taskListId: number) => {
+        setSelectedTaskListId(taskListId);
+        onOpen();
+    };
+
+    const taskListOptions = taskLists.map(list => ({value: list.taskListId, label: list.name}))
+    
     if(!isConnected) return <h1>Connecting...</h1>
 
     return (
         <>
-        <Flex gap={"2rem"} alignItems={"start"} overflowX={"scroll"} height="100%">
-            {taskLists.map(list => <Tasklist taskList={list} key={list.taskListId}/>)}
-        </Flex>
-     <ChatDrawer />
-</>
+            <Flex gap="2rem" alignItems="start" overflowX="scroll" height="100%">
+                {taskLists.map(list => 
+                    <Tasklist 
+                        openModal={() => openModalWithTaskListId(list.taskListId)}
+                        taskList={list} 
+                        key={list.taskListId} />
+                )}
+            </Flex>
+            <NewTaskModal
+                isOpen={isOpen}
+                onClose={onClose}
+                taskListId={selectedTaskListId}
+                taskListOptions={taskListOptions}
+            />
+            <ChatDrawer />
+        </>
     );
 };
 

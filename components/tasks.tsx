@@ -11,10 +11,14 @@ type TaskProps = {
 
 export const Task: React.FC<TaskProps> = ({ task, onDragStart }) => {
     const { title, dueDate, svg, assignedInitials } = task;
-
-    console.log(dueDate)
     return (
-        <Card size="md" draggable="true" onDragStart={(e) => onDragStart(e, task.taskId)}>
+        <Card 
+            size="md" 
+            draggable="true" 
+            cursor={"grab"}
+            onDragStart={(e) => onDragStart(e, task.taskId)}
+            onClick={() => console.log('Task clicked')}
+        >
             <CardBody>
                 <Heading className={"break-all"} size="md">{title}</Heading>
                 <Text>{formatDateOrCountdown(dueDate)}</Text>
