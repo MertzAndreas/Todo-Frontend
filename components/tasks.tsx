@@ -24,7 +24,7 @@ export const Task: React.FC<TaskProps> = ({ task, onDragStart }) => {
                 <Text>{formatDateOrCountdown(dueDate)}</Text>
                 <Flex flexDirection="row" justifyContent="space-between">
                     <Text>{assignedInitials.map(assignee => assignee).join(', ')}</Text>
-                    <Text>{getIconById(svg, "2rem", "2rem")}</Text>
+                    <Text>{getIconById(svg, {width : "2rem", height: "2rem"})}</Text>
                 </Flex>
             </CardBody>
         </Card>

@@ -1,17 +1,15 @@
 import React from 'react';
+import {ComponentWithAs, Icon, IconProps} from '@chakra-ui/react';
 
-interface BaseIconProps extends React.SVGProps<SVGSVGElement> {
-    children: React.ReactNode;
-}
 
-const BaseIcon: React.FC<BaseIconProps> = ({ children, ...props }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" {...props}>
+
+const BaseIcon: React.FC<IconProps> = ({ children, ...props }) => (
+    <Icon viewBox="0 0 256 256" {...props}>
         {children}
-    </svg>
+    </Icon>
 );
 
-export default BaseIcon;
-export const AcornIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const AcornIcon: ComponentWithAs<"svg", IconProps>= (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path d="M216 112v16c0 53-88 88-88 112c0-24-88-59-88-112v-16Z" opacity={0.2}></path>
@@ -22,7 +20,7 @@ export const AcornIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 
-export const BandAidIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const BandAidIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path
@@ -33,7 +31,7 @@ export const BandAidIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
         </g>
     </BaseIcon>
 );
-export const BabyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const BabyIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path d="M224 128a96 96 0 1 1-96-96a96 96 0 0 1 96 96" opacity={0.2}></path>
@@ -44,7 +42,7 @@ export const BabyIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 
 );
 
-export const HorseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const HorseIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path
@@ -55,7 +53,7 @@ export const HorseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
         </g>
     </BaseIcon>
 );
-export const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const FileIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path d="M208 88h-56V32Z" opacity={0.2}></path>
@@ -66,7 +64,7 @@ export const FileIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 
 
-export const BirdIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const BirdIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path
@@ -78,7 +76,7 @@ export const BirdIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     </BaseIcon>
 );
 
-export const TrashBinIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const TrashBinIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path d="M200 56v152a8 8 0 0 1-8 8H64a8 8 0 0 1-8-8V56Z" opacity="0.2"/>
@@ -88,7 +86,7 @@ export const TrashBinIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => 
     </BaseIcon>
 );
 
-export const WheelchairIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const WheelchairIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path d="M200 48a24 24 0 1 1-24-24a24 24 0 0 1 24 24" opacity="0.2"/>
@@ -98,7 +96,7 @@ export const WheelchairIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) =
     </BaseIcon>
 );
 
-export const StarIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const StarIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path
@@ -110,7 +108,7 @@ export const StarIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     </BaseIcon>
 );
 
-export const MicroscopeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const MicroscopeIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path d="M136 32v104a8 8 0 0 1-8 8H80a8 8 0 0 1-8-8V32a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8" opacity="0.2"/>
@@ -120,7 +118,7 @@ export const MicroscopeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) =
     </BaseIcon>
 );
 
-export const SpeedometerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const SpeedometerIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path
@@ -132,7 +130,7 @@ export const SpeedometerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) 
     </BaseIcon>
 );
 
-export const MonitorIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const MonitorIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path d="M224 64v112a16 16 0 0 1-16 16H48a16 16 0 0 1-16-16V64a16 16 0 0 1 16-16h160a16 16 0 0 1 16 16"
@@ -143,7 +141,7 @@ export const MonitorIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     </BaseIcon>
 );
 
-export const ProjectorIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const ProjectorIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path d="M208 72v112H48V72Z" opacity="0.2"/>
@@ -153,7 +151,7 @@ export const ProjectorIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) =>
     </BaseIcon>
 );
 
-export const PackageIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const PackageIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path d="M128 129.09V232a8 8 0 0 1-3.84-1l-88-48.18a8 8 0 0 1-4.16-7V80.18a8 8 0 0 1 .7-3.25Z"
@@ -164,7 +162,7 @@ export const PackageIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     </BaseIcon>
 );
 
-export const CatIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+export const CatIcon: ComponentWithAs<"svg", IconProps> = (props) => (
     <BaseIcon {...props}>
         <g fill="currentColor">
             <path

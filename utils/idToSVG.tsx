@@ -1,9 +1,22 @@
-import { AcornIcon, BandAidIcon, BabyIcon, HorseIcon, FileIcon, BirdIcon, TrashBinIcon, WheelchairIcon, StarIcon, MicroscopeIcon, SpeedometerIcon, MonitorIcon, ProjectorIcon, PackageIcon, CatIcon } from "@/utils/icons";
-import {ReactNode} from "react";
-import {Property} from "csstype";
-
-
-
+import {
+  AcornIcon,
+  BandAidIcon,
+  BabyIcon,
+  HorseIcon,
+  FileIcon,
+  BirdIcon,
+  TrashBinIcon,
+  WheelchairIcon,
+  StarIcon,
+  MicroscopeIcon,
+  SpeedometerIcon,
+  MonitorIcon,
+  ProjectorIcon,
+  PackageIcon,
+  CatIcon,
+} from "@/utils/icons";
+import { ReactNode } from "react";
+import { IconProps } from "@chakra-ui/react";
 
 export const iconMap = [
   { id: 0, icon: AcornIcon, label: "Acorn" },
@@ -20,18 +33,12 @@ export const iconMap = [
   { id: 11, icon: MonitorIcon, label: "Monitor" },
   { id: 12, icon: ProjectorIcon, label: "Projector" },
   { id: 13, icon: PackageIcon, label: "Package" },
-  { id: 14, icon: CatIcon, label: "Cat" }
+  { id: 14, icon: CatIcon, label: "Cat" },
 ];
 
-interface IconObject {
-  id: number;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-}
 export const getIconById = (
     id: number,
-    width?: number | string,
-    height?: number | string,
-    color?: string
+    props?: IconProps
 ): ReactNode => {
   const iconObject = iconMap.find(icon => icon.id === id);
   if (!iconObject) {
@@ -39,12 +46,5 @@ export const getIconById = (
   }
   const IconComponent = iconObject.icon;
 
-  // Spread the props to the IconComponent
-  const iconProps: React.SVGProps<SVGSVGElement> = {
-    width,
-    height,
-    color,
-  };
-
-  return <IconComponent {...iconProps} />;
+  return <IconComponent {...props} />;
 };

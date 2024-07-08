@@ -1,4 +1,4 @@
-import React, {FormEvent, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Modal,
     ModalOverlay,
@@ -14,8 +14,6 @@ import {
     Textarea, Select,
 } from '@chakra-ui/react';
 import {useToken} from "@/hooks/useToken";
-import IconPicker from "@/app/Dashboard/[projectId]/iconPicker";
-import IconPickerModal from "@/app/Dashboard/[projectId]/iconPicker";
 import IconSelector from "@/app/Dashboard/[projectId]/iconPicker";
 
 
@@ -55,8 +53,8 @@ const NewTaskModal = ({isOpen, onClose, taskListId, taskListOptions}: NewTaskMod
     };
     
     
-    const handleIconSelect = (iconId: number) => {
-        setNewTask({ ...newTask, iconId: iconId.toString() });
+    const handleIconSelect = (iconId: string) => {
+        setNewTask({ ...newTask, iconId: iconId });
     }
 
     const handleSubmit = async () => {
@@ -78,7 +76,6 @@ const NewTaskModal = ({isOpen, onClose, taskListId, taskListOptions}: NewTaskMod
             body: JSON.stringify(data)
         })
         
-        console.log(data);
         setNewTask({
             title: '',
             description: '',
@@ -111,7 +108,7 @@ const NewTaskModal = ({isOpen, onClose, taskListId, taskListOptions}: NewTaskMod
                                 name="description"
                                 value={newTask.description}
                                 onChange={handleChange}
-                                maxHeight={6}
+                                rows={4}
                             />
                         </FormControl>
                         <FormControl mt={4}>

@@ -3,11 +3,11 @@ import React, {useState} from "react";
 import { iconMap } from "@/utils/idToSVG";
 
 interface IconSelectorProps {
-    onSelect: (iconId: number) => void;
+    onSelect: (iconId: string) => void;
 }
 
 const IconSelector = ({ onSelect }: IconSelectorProps) => {
-
+    const [selected, setSelected] = useState<null | number>(null)
     return (
         <Grid
             templateColumns="repeat(5, 1fr)"
@@ -23,9 +23,15 @@ const IconSelector = ({ onSelect }: IconSelectorProps) => {
                         padding={"2px"}
                         width="100%"
                         size="lg"
+                        variant={"ghost"}
+                        colorScheme={"facebook"}
+                        isActive={id === selected}
                         icon={<Icon width={"auto"} height={"100%"}/>}
                         aria-label={label}
-                        onClick={() => onSelect(id)}
+                        onClick={() => {
+                            setSelected(id)
+                            onSelect(id.toString())
+                        }}
                     />
 
             ))}
