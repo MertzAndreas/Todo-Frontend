@@ -14,7 +14,7 @@ export type LoginForm = {
 
 const Login = () => {
     const router = useRouter();
-    const { validateAndRefreshToken } = useToken(undefined, '/chat');
+    const { validateAndRefreshToken } = useToken(undefined, '/Dashboard');
     const [form, setForm] = useState<LoginForm>({
         email: '',
         password: '',

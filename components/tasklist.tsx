@@ -12,6 +12,7 @@ type TasklistProps = {
 
 const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
     const { taskListId, name, tasks } = taskList;
+    const { getToken } = useToken();
     
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -23,19 +24,26 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
         const taskListId = e.currentTarget.id;
         const taskListParsedId = parseInt(taskListId);
         const todoId = parseInt(e.dataTransfer.getData("text/plain"));
-
-        console.log('handleDrop: Dropped with todoId:', todoId);
         handleTodoListUpdate(taskListParsedId, todoId);
     };
 
-    function handleTodoListUpdate(taskListId: number, todoId: number | null) {
-        console.log('handleTodoListUpdate:', taskListId, todoId);
+    const handleTodoListUpdate = async (taskListId: number, todoId: number | null) => {
+        if (!todoId) return;
+        await fetch("http://localhost:5040/api/Task/update_todo_list", {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                'Authorization': "Bearer " + await getToken(),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ taskId: todoId, listId: taskListId })
+        })
+        
+        return;
     }
 
     const handleDragStart = (e: React.DragEvent<HTMLElement>, todoId: number) => {
-        console.log('handleDragStart: Setting draggable.current to', todoId);
         e.dataTransfer.setData("text/plain", todoId.toString());
-        console.log('handleDragStart: draggable.current set to', todoId);
     };
 
     return (

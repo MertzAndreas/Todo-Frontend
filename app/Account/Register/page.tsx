@@ -15,7 +15,7 @@ export type RegisterForm = {
 }
 
 const Register = () => {
-    const { validateAndRefreshToken } = useToken('','/chat');
+    const { validateAndRefreshToken } = useToken('','/Dashboard');
     const router = useRouter();
     const [form, setForm] = useState<RegisterForm>({
         username: '',
