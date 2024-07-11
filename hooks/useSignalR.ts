@@ -1,69 +1,71 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import {
-    HubConnectionBuilder,
-    HubConnection,
-    HubConnectionState,
-    LogLevel,
-} from '@microsoft/signalr';
-import { useToken } from '@/hooks/useToken';
+  HubConnectionBuilder,
+  HubConnection,
+  HubConnectionState,
+  LogLevel,
+} from "@microsoft/signalr";
+import useAuthContext from "@/providers/AuthProvider";
 
 export const useSignalR = (hubUrl?: string) => {
-    const [isConnected, setIsConnected] = useState(false);
-    const { getToken } = useToken();
+  const [isConnected, setIsConnected] = useState(false);
+  const { getToken } = useAuthContext();
 
-    const connectionRef = useRef<HubConnection | null>(null);
+  const connectionRef = useRef<HubConnection | null>(null);
 
-    let didInit = false
-    useEffect(() => {
-        const initializeConnection = async () => {
-            if(didInit) return;
-            try {
-                didInit = true;
-                const validToken = await getToken();
+  let didInit = false;
+  useEffect(() => {
+    const initializeConnection = async () => {
+      if (didInit) return;
+      try {
+        didInit = true;
+        const validToken = await getToken();
 
-                const newConnection = new HubConnectionBuilder()
-                    .withUrl(hubUrl || `http://localhost:5040/hub`, {
-                        accessTokenFactory: () => validToken,
-                    })
-                    .withAutomaticReconnect()
-                    .configureLogging(LogLevel.Information)
-                    .build();
+        const newConnection = new HubConnectionBuilder()
+          .withUrl(hubUrl || `http://localhost:5040/hub`, {
+            accessTokenFactory: () => validToken,
+          })
+          .withAutomaticReconnect()
+          .configureLogging(LogLevel.Information)
+          .build();
 
-                connectionRef.current = newConnection;
+        connectionRef.current = newConnection;
 
-                newConnection.onreconnecting((error) => {
-                    console.log('Connection lost due to error. Reconnecting.', error);
-                });
+        newConnection.onreconnecting((error) => {
+          console.log("Connection lost due to error. Reconnecting.", error);
+        });
 
-                newConnection.onreconnected((connectionId) => {
-                    console.log('Reconnected. Connection ID:', connectionId);
-                });
+        newConnection.onreconnected((connectionId) => {
+          console.log("Reconnected. Connection ID:", connectionId);
+        });
 
-                newConnection.onclose((error) => {
-                    console.error('Connection closed due to error:', error);
-                    setIsConnected(false);
-                });
+        newConnection.onclose((error) => {
+          console.error("Connection closed due to error:", error);
+          setIsConnected(false);
+        });
 
-                newConnection.start().then(() => {
-                    setIsConnected(true);
-                }).catch((error) => {
-                    console.error('Error starting connection:', error);
-                    setIsConnected(false);
-                });
+        newConnection
+          .start()
+          .then(() => {
+            setIsConnected(true);
+          })
+          .catch((error) => {
+            console.error("Error starting connection:", error);
+            setIsConnected(false);
+          });
+      } catch (error) {
+        console.error("Error initializing connection:", error);
+      }
+    };
 
-            } catch (error) {
-                console.error('Error initializing connection:', error);
-            }
-        };
+    initializeConnection();
 
-        initializeConnection();
+    return () => {
+      if (connectionRef.current?.state === HubConnectionState.Connected) {
+        connectionRef.current.stop();
+      }
+    };
+  }, [hubUrl, getToken]);
 
-        return () => {
-            if (connectionRef.current?.state === HubConnectionState.Connected) {
-                connectionRef.current.stop();
-            }
-        };
-    }, [hubUrl, getToken]);
-
-    return [connectionRef.current, isConnected] as const;
+  return [connectionRef.current, isConnected] as const;
 };
