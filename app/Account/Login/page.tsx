@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Box, Button, Flex, Heading, Input } from "@chakra-ui/react";
 import useAuthContext from "@/providers/AuthProvider";
@@ -10,11 +10,16 @@ export type LoginForm = {
 };
 
 const Login = () => {
-  const { login } = useAuthContext();
+  const { isAuthenticated, login, redirectToDashboardIfAuthenticated } =
+    useAuthContext();
   const [form, setForm] = useState<LoginForm>({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    redirectToDashboardIfAuthenticated();
+  }, [isAuthenticated]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });

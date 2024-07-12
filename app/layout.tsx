@@ -5,6 +5,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import Navbar from "@/components/Navbar";
 import theme from "@/theme";
 import { AuthProvider } from "@/providers/AuthProvider";
+import ChatDrawer from "@/components/ChatDrawer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,7 @@ export default function RootLayout({
             <ChakraProvider theme={theme}>
               <Navbar />
               {children}
+              <ChatDrawer />
             </ChakraProvider>
           </ReactQueryProvider>
         </AuthProvider>

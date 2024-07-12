@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { useSignalR } from "@/hooks/useSignalR";
 import { Flex, useDisclosure } from "@chakra-ui/react";
 import Tasklist from "@/components/tasklist";
-import ChatDrawer from "@/components/ChatDrawer";
 import NewTaskModal from "@/app/Dashboard/[projectId]/NewTaskModal";
 import ProtectedRoutes from "@/components/ProtectedRoutes";
 import useAuthContext from "@/providers/AuthProvider";
@@ -92,7 +91,6 @@ const Page = ({ params: { projectId } }: PageProps) => {
         taskListId={selectedTaskListId}
         taskListOptions={taskListOptions}
       />
-      <ChatDrawer />
     </>
   );
 };

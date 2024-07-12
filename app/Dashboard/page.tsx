@@ -3,7 +3,6 @@ import React from "react";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
-import ChatDrawer from "@/components/ChatDrawer";
 import ProtectedRoutes from "@/components/ProtectedRoutes";
 import useAuthContext from "@/providers/AuthProvider";
 
@@ -142,7 +141,6 @@ const Page = () => {
           <Button variant="blueButton">Create new Project</Button>
         </Link>
       </Flex>
-      <ChatDrawer />
     </>
   );
 };

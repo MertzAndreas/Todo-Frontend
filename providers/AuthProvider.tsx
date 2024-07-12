@@ -22,6 +22,7 @@ interface AuthContextType {
   login: (form: LoginForm) => Promise<void>;
   logOut: () => void;
   register: (form: RegisterForm) => Promise<void>;
+  redirectToDashboardIfAuthenticated: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -53,13 +54,26 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  /*This solution is kind of a hack, but it works.
-        It ensures that the method is not called on the server side which would cause an error */
-  if (isAuthenticated === null && typeof window !== "undefined") {
-    initialAuthState();
-  }
+  //ChatGPT says that this should be in a ref but it works for me without bugs.
+  let isProccessing = false;
+  const refreshAccessToken = useCallback(async () => {
+    try {
+      if (isProccessing) return;
+      isProccessing = true;
+      const newToken = await fetchNewToken();
+      setTokenInStorage(newToken);
+      setIsAuthenticated(true);
+      return newToken;
+    } catch (error) {
+      removeTokenFromStorage();
+      setIsAuthenticated(false);
+      throw new Error("Failed to refresh token");
+    } finally {
+      isProccessing = false;
+    }
+  }, []);
 
-  const login = async (form: LoginForm) => {
+  async function login(form: LoginForm) {
     const res = await fetch("http://localhost:5040/Account/login", {
       method: "POST",
       credentials: "include",
@@ -78,9 +92,9 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     setTokenInStorage(data.accessToken);
     setIsAuthenticated(true);
     router.push("/Dashboard");
-  };
+  }
 
-  const register = async (form: RegisterForm) => {
+  async function register(form: RegisterForm) {
     const res = await fetch("http://localhost:5040/Account/register", {
       method: "POST",
       headers: {
@@ -98,27 +112,14 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     setTokenInStorage(data.accessToken);
     setIsAuthenticated(true);
     router.push("/Dashboard");
-  };
+  }
 
-  const logOut = () => {
+  async function logOut() {
     setIsAuthenticated(false);
     removeTokenFromStorage();
     // TODO: Implement invalidation of refresh token on backend upon logout
     router.push("/Account/Login");
-  };
-
-  const refreshAccessToken = useCallback(async () => {
-    try {
-      const newToken = await fetchNewToken();
-      setTokenInStorage(newToken);
-      setIsAuthenticated(true);
-      return newToken;
-    } catch (error) {
-      removeTokenFromStorage();
-      setIsAuthenticated(false);
-      throw new Error("Failed to refresh token");
-    }
-  }, []);
+  }
 
   const getToken = useCallback(async () => {
     try {
@@ -150,23 +151,22 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     }
   }
 
-  useEffect(() => {
-    const validateToken = async () => {
-      try {
-        await getToken();
-        setIsAuthenticated(true);
-      } catch {
-        setIsAuthenticated(false);
-        removeTokenFromStorage();
-      }
-    };
-
-    validateToken();
-  }, [getToken]);
+  function redirectToDashboardIfAuthenticated() {
+    if (isAuthenticated === true) {
+      router.push("/Dashboard");
+    }
+  }
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, getToken, login, logOut, register }}
+      value={{
+        isAuthenticated,
+        getToken,
+        login,
+        logOut,
+        register,
+        redirectToDashboardIfAuthenticated,
+      }}
     >
       {children}
     </AuthContext.Provider>
