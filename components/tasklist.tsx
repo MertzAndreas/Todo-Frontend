@@ -1,9 +1,10 @@
-import { Card, Flex, Heading, IconButton } from "@chakra-ui/react";
+import { Card, CardBody, Flex, Heading, IconButton } from "@chakra-ui/react";
 import React from "react";
 import { TaskList } from "@/app/Dashboard/[projectId]/page";
 import { Task } from "@/components/tasks";
 import useAuthContext from "@/providers/AuthProvider";
 import { PlusIcon } from "@/utils/icons";
+import TaskListOptionsMenu from "./TaskListOptionsMenu";
 
 type TasklistProps = {
   taskList: TaskList;
@@ -72,26 +73,37 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
           alignItems="center"
           marginBottom="1rem"
         >
-          <Heading as="h1" fontWeight="bold" marginBottom="0.5rem">
+          <Heading
+            as="h2"
+            fontSize={"large"}
+            fontWeight="bold"
+            marginBottom="0.5rem"
+          >
             {name}
           </Heading>
-          <IconButton
-            aria-label="Add task"
-            icon={<PlusIcon width={"auto"} height={"65%"} />}
-            variant={"ghost"}
-            colorScheme="facebook"
-            size={"lg"}
-            cursor={"pointer"}
-            onClick={openModal}
-          />
+          <TaskListOptionsMenu />
         </Flex>
-        {tasks.map((t) => (
-          <Task
-            key={t.taskId}
-            task={t}
-            onDragStart={(e) => handleDragStart(e, t.taskId)}
-          />
-        ))}
+        <Flex flexDir={"column"} gap={2}>
+          <Card size="sm">
+            <CardBody padding={0}>
+              <IconButton
+                onClick={openModal}
+                colorScheme="facebook"
+                aria-label="Add task"
+                variant={"ghost"}
+                width={"100%"}
+                icon={<PlusIcon height={"50%"} width={"auto"} />}
+              />
+            </CardBody>
+          </Card>
+          {tasks.map((t) => (
+            <Task
+              key={t.taskId}
+              task={t}
+              onDragStart={(e) => handleDragStart(e, t.taskId)}
+            />
+          ))}
+        </Flex>
       </Card>
     </Flex>
   );

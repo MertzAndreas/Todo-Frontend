@@ -76,7 +76,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
   if (!isConnected) return <h1>Connecting...</h1>;
 
   return (
-    <Flex flexDir={"column"} minHeight={"100%"}>
+    <Flex flexDir={"column"} minHeight={"100%"} m={"2rem"}>
       <Flex gap="2rem" overflowX="scroll" minHeight={"100%"}>
         {taskLists.map((list) => (
           <Tasklist
