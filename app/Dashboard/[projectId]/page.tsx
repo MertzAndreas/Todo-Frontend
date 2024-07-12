@@ -11,7 +11,7 @@ import AddTaskList from "./addTaskList";
 
 interface PageProps {
   params: {
-    projectId: number;
+    projectId: string;
   };
 }
 
@@ -36,7 +36,7 @@ export type Project = {
 };
 
 const Page = ({ params: { projectId } }: PageProps) => {
-  if (isNaN(projectId)) notFound();
+  if (isNaN(parseInt(projectId))) notFound();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [taskLists, setTaskLists] = useState<TaskList[]>([]);
   const [selectedTaskListId, setSelectedTaskListId] = useState<null | number>(
@@ -85,7 +85,10 @@ const Page = ({ params: { projectId } }: PageProps) => {
             key={list.taskListId}
           />
         ))}
-        <AddTaskList hubConnection={connection} />
+        <AddTaskList
+          hubConnection={connection}
+          projectId={parseInt(projectId)}
+        />
       </Flex>
       <NewTaskModal
         isOpen={isOpen}

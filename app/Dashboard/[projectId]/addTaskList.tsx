@@ -21,16 +21,22 @@ import React, { FormEvent, useRef, useState } from "react";
 
 type AddTaskListProps = {
   hubConnection: HubConnection | null;
+  projectId: number;
 };
 
-export default function AddTaskList({ hubConnection }: AddTaskListProps) {
+export default function AddTaskList({
+  hubConnection,
+  projectId,
+}: AddTaskListProps) {
+  console.log(projectId);
   const [taskListName, setTaskListName] = useState("");
   const initRef = useRef(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    const newTaskList = { name: taskListName, projectId: projectId };
     hubConnection
-      ?.invoke("CreateTaskList", taskListName)
+      ?.invoke("CreateTaskList", newTaskList)
       .then(() => setTaskListName(""))
       .catch((err) => console.error("Error sending message:", err));
   };
@@ -59,7 +65,6 @@ export default function AddTaskList({ hubConnection }: AddTaskListProps) {
               <Portal>
                 <PopoverContent>
                   <PopoverArrow />
-                  <PopoverCloseButton />
                   <PopoverBody as={"form"} onSubmit={handleSubmit}>
                     <FormControl>
                       <FormLabel>Title of new tasklist</FormLabel>
