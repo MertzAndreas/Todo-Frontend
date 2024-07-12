@@ -82,6 +82,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
           <Tasklist
             openModal={() => openModalWithTaskListId(list.taskListId)}
             taskList={list}
+            connection={connection}
             key={list.taskListId}
           />
         ))}

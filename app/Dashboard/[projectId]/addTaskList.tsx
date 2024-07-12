@@ -59,7 +59,7 @@ export default function AddTaskList({ hubConnection }: AddTaskListProps) {
               <Portal>
                 <PopoverContent>
                   <PopoverArrow />
-                  <PopoverCloseButton />
+                  <PopoverCloseButton  />
                   <PopoverBody as={"form"} onSubmit={handleSubmit}>
                     <FormControl>
                       <FormLabel>Title of new tasklist</FormLabel>
