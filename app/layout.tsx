@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-gray-300`}>
         <AuthProvider>
           <ReactQueryProvider>
-            <ChakraProvider theme={theme}>
+            <ChakraProvider>
               <Navbar />
               {children}
               <ChatDrawer />

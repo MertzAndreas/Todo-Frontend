@@ -1,9 +1,9 @@
-import { Card, Flex, Heading, Icon } from "@chakra-ui/react";
+import { Card, Flex, Heading, IconButton } from "@chakra-ui/react";
 import React from "react";
 import { TaskList } from "@/app/Dashboard/[projectId]/page";
 import { Task } from "@/components/tasks";
-import { PlusSquareIcon } from "@chakra-ui/icons";
 import useAuthContext from "@/providers/AuthProvider";
+import { PlusIcon } from "@/utils/icons";
 
 type TasklistProps = {
   taskList: TaskList;
@@ -57,9 +57,10 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
       id={taskListId.toString()}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      marginBottom="2rem"
+      marginBottom="0.25rem"
     >
       <Card
+        minHeight={"100%"}
         width={"20rem"}
         padding={"1.5rem"}
         boxShadow="md"
@@ -74,12 +75,13 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
           <Heading as="h1" fontWeight="bold" marginBottom="0.5rem">
             {name}
           </Heading>
-          <Icon
-            as={PlusSquareIcon}
-            boxSize={8}
-            color="blue.500"
+          <IconButton
+            aria-label="Add task"
+            icon={<PlusIcon width={"auto"} height={"65%"} />}
+            variant={"ghost"}
+            colorScheme="facebook"
+            size={"lg"}
             cursor={"pointer"}
-            _hover={{ color: "blue.600" }}
             onClick={openModal}
           />
         </Flex>
@@ -96,4 +98,3 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
 };
 
 export default Tasklist;
-

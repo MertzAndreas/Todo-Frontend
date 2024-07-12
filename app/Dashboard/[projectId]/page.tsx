@@ -7,6 +7,7 @@ import Tasklist from "@/components/tasklist";
 import NewTaskModal from "@/app/Dashboard/[projectId]/NewTaskModal";
 import ProtectedRoutes from "@/components/ProtectedRoutes";
 import useAuthContext from "@/providers/AuthProvider";
+import AddTaskList from "./addTaskList";
 
 interface PageProps {
   params: {
@@ -75,8 +76,8 @@ const Page = ({ params: { projectId } }: PageProps) => {
   if (!isConnected) return <h1>Connecting...</h1>;
 
   return (
-    <>
-      <Flex gap="2rem" alignItems="start" overflowX="scroll" height="100%">
+    <Flex flexDir={"column"} minHeight={"100%"}>
+      <Flex gap="2rem" overflowX="scroll" minHeight={"100%"}>
         {taskLists.map((list) => (
           <Tasklist
             openModal={() => openModalWithTaskListId(list.taskListId)}
@@ -84,6 +85,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
             key={list.taskListId}
           />
         ))}
+        <AddTaskList hubConnection={connection} />
       </Flex>
       <NewTaskModal
         isOpen={isOpen}
@@ -91,7 +93,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
         taskListId={selectedTaskListId}
         taskListOptions={taskListOptions}
       />
-    </>
+    </Flex>
   );
 };
 
