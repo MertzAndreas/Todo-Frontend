@@ -81,7 +81,7 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
           >
             {name}
           </Heading>
-          <TaskListOptionsMenu />
+          <TaskListOptionsMenu taskListId={taskListId} />
         </Flex>
         <Flex flexDir={"column"} gap={2}>
           <Card size="sm">

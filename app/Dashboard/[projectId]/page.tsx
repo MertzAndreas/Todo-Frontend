@@ -1,13 +1,13 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { notFound } from "next/navigation";
-import { useSignalR } from "@/hooks/useSignalR";
 import { Flex, useDisclosure } from "@chakra-ui/react";
 import Tasklist from "@/components/tasklist";
 import NewTaskModal from "@/app/Dashboard/[projectId]/NewTaskModal";
 import ProtectedRoutes from "@/components/ProtectedRoutes";
 import useAuthContext from "@/providers/AuthProvider";
 import AddTaskList from "./addTaskList";
+import useSignalRContext from "@/providers/SignalRProvider";
 
 interface PageProps {
   params: {
@@ -42,26 +42,28 @@ const Page = ({ params: { projectId } }: PageProps) => {
   const [selectedTaskListId, setSelectedTaskListId] = useState<null | number>(
     null,
   );
-  const [connection, isConnected] = useSignalR();
+  const { connection, isConnected } = useSignalRContext();
   const { getToken } = useAuthContext();
-  useEffect(() => {
-    const fetchOverview = async () => {
-      fetch("http://localhost:5040/api/Project/project_overview/" + projectId, {
+
+  const fetchOverview = useCallback(async () => {
+    const response = await fetch(
+      `http://localhost:5040/api/Project/project_overview/${projectId}`,
+      {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + (await getToken()),
         },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setTaskLists(data.taskLists);
-        });
-    };
+      },
+    );
+    const data = await response.json();
+    console.log(data);
+    setTaskLists(data.taskLists);
+  }, [projectId, getToken]);
 
+  useEffect(() => {
     fetchOverview();
-  }, []);
+  }, [fetchOverview]);
 
   const openModalWithTaskListId = (taskListId: number) => {
     setSelectedTaskListId(taskListId);

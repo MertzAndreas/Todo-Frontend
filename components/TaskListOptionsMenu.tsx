@@ -1,3 +1,4 @@
+import useSignalRContext from "@/providers/SignalRProvider";
 import { OptionsIcon, TrashBinIcon } from "@/utils/icons";
 import { EditIcon } from "@chakra-ui/icons";
 import {
@@ -7,23 +8,28 @@ import {
   MenuItem,
   MenuList,
 } from "@chakra-ui/react";
+import { HubConnection } from "@microsoft/signalr";
 import React from "react";
 
 type TaskListOptionsMenuProps = {
   taskListId: number;
+  connection: HubConnection | null;
 };
 
 export default function TaskListOptionsMenu({
   taskListId,
 }: TaskListOptionsMenuProps) {
-  function handleDelete(
-    event: MouseEvent<HTMLButtonElement, MouseEvent>,
-  ): void {
-    throw new Error("Function not implemented.");
+  const { connection } = useSignalRContext();
+
+  function handleDelete(e: React.MouseEvent): void {
+    e.preventDefault();
+    connection
+      ?.invoke("DeleteTaskList", taskListId)
+      .catch((err) => console.error(err));
   }
 
-  function handleEdit(event: MouseEvent<HTMLButtonElement, MouseEvent>): void {
-    throw new Error("Function not implemented.");
+  function handleEdit(e: React.MouseEvent): void {
+    e.preventDefault();
   }
 
   return (

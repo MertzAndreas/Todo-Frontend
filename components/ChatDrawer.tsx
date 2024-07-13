@@ -20,9 +20,9 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import React, { FormEvent, useEffect, useState } from "react";
-import { useSignalR } from "@/hooks/useSignalR";
 import { ChatIcon } from "@chakra-ui/icons";
 import ProtectedRoute from "./ProtectedRoutes";
+import useSignalRContext from "@/providers/SignalRProvider";
 
 type Message = {
   senderId: string;
@@ -39,7 +39,7 @@ type Project = {
 
 function ChatDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [connection, isConnected] = useSignalR();
+  const { connection, isConnected } = useSignalRContext();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   const [project, setProject] = useState<Project[]>([]);
@@ -214,4 +214,3 @@ function ChatDrawer() {
 
 const ProtectedChat = ProtectedRoute(ChatDrawer);
 export default ProtectedChat;
-
