@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import theme from "@/theme";
 import { AuthProvider } from "@/providers/AuthProvider";
 import ChatDrawer from "@/components/ChatDrawer";
+import { SignalRProvider } from "@/providers/SignalRProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,13 +24,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} bg-gray-300`}>
         <AuthProvider>
-          <ReactQueryProvider>
-            <ChakraProvider>
-              <Navbar />
-              {children}
-              <ChatDrawer />
-            </ChakraProvider>
-          </ReactQueryProvider>
+          <SignalRProvider>
+            <ReactQueryProvider>
+              <ChakraProvider>
+                <Navbar />
+                {children}
+                <ChatDrawer />
+              </ChakraProvider>
+            </ReactQueryProvider>
+          </SignalRProvider>
         </AuthProvider>
       </body>
     </html>

@@ -9,30 +9,31 @@ import {
   Input,
   Popover,
   PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
+  PopoverBody, PopoverCloseButton,
   PopoverContent,
   PopoverFooter,
   PopoverTrigger,
   Portal,
 } from "@chakra-ui/react";
-import { HubConnection } from "@microsoft/signalr";
+
 import React, { FormEvent, useRef, useState } from "react";
+import useSignalRContext from "@/providers/SignalRProvider";
 
 type AddTaskListProps = {
-  hubConnection: HubConnection | null;
+  projectId : number;
 };
 
-export default function AddTaskList({ hubConnection }: AddTaskListProps) {
+export default function AddTaskList({ projectId }: AddTaskListProps) {
   const [taskListName, setTaskListName] = useState("");
+  const { connection } = useSignalRContext();
   const initRef = useRef(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    hubConnection
+    connection
       ?.invoke("CreateTaskList", taskListName)
       .then(() => setTaskListName(""))
-      .catch((err) => console.error("Error sending message:", err));
+      .catch((err: any) => console.error("Error sending message:", err));
   };
 
   return (

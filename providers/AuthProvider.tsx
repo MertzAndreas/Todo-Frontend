@@ -3,8 +3,8 @@ import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
   useCallback,
+  useEffect,
 } from "react";
 import {
   getTokenFromStorage,
@@ -156,6 +156,12 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
       router.push("/Dashboard");
     }
   }
+
+  useEffect(() => {
+    if (isAuthenticated === null) {
+      initialAuthState();
+    }
+  }, [isAuthenticated]);
 
   return (
     <AuthContext.Provider
