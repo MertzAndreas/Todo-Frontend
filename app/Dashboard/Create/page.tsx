@@ -5,13 +5,11 @@ import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import { Box, Button, Flex, Heading, Input, Textarea } from "@chakra-ui/react";
 import useAuthContext from "@/providers/AuthProvider";
-import { getUserIdFromToken } from "@/utils/token";
 import ProtectedRoute from "@/components/ProtectedRoutes";
 
 type CreateProjectProps = {
   name: string;
   description: string;
-  creatorId: string;
 };
 
 const CreateProject = () => {
@@ -19,26 +17,15 @@ const CreateProject = () => {
   const queryClient = useQueryClient();
   const { getToken } = useAuthContext();
   const [form, setForm] = useState<CreateProjectProps>(() => {
-    const id = getUserIdFromToken();
-    if (!id) {
-      console.log("Invalid token");
-      router.push("/Account/Login");
-    }
     return {
       name: "",
       description: "",
-      creatorId: id || "",
     };
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      if (form.creatorId === null) {
-        throw new Error("Invalid token");
-      }
-
-      setForm({ ...form, creatorId: form.creatorId });
       const res = await fetch("http://localhost:5040/api/Project", {
         method: "POST",
         credentials: "include",

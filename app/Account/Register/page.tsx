@@ -22,7 +22,7 @@ const Register = () => {
 
   useEffect(() => {
     redirectToDashboardIfAuthenticated();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, redirectToDashboardIfAuthenticated]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };

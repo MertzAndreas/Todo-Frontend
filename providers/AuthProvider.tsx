@@ -151,11 +151,11 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     }
   }
 
-  function redirectToDashboardIfAuthenticated() {
+  const redirectToDashboardIfAuthenticated = useCallback(() => {
     if (isAuthenticated === true) {
       router.push("/Dashboard");
     }
-  }
+  }, [isAuthenticated, router]);
 
   useEffect(() => {
     if (isAuthenticated === null) {
