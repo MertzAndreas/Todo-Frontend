@@ -66,18 +66,8 @@ function ChatDrawer() {
     };
   }, [connection, isConnected]);
 
-  const handleReceiveMessage = (
-    senderId: string,
-    content: string,
-    sentTime: string,
-    senderName: string,
-    projectId: string,
-  ) => {
-    console.log(content);
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { senderId, content, sentTime, senderName, projectId },
-    ]);
+  const handleReceiveMessage = (message: Message) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
   };
 
   const handleMessageHistory = (messageHistory: Message[]) => {
@@ -86,12 +76,11 @@ function ChatDrawer() {
 
   const handleProjectList = (projectList: Project[]) => {
     setProject(projectList);
-    console.log(projectList);
     setSelectedProject(projectList[0].id);
   };
+
   const handleSendMessage = async (event: FormEvent) => {
     event.preventDefault();
-    console.log("Selected Project ID:", selectedProject); // Debugging log
 
     if (!selectedProject) {
       console.error("Selected project ID is null or empty.");
@@ -100,8 +89,6 @@ function ChatDrawer() {
 
     if (newMessage.trim() && connection?.state === "Connected") {
       const messageObj = { content: newMessage, projectId: selectedProject };
-      console.log("Sending message:", messageObj); // Debugging log
-
       connection
         .invoke("PostMessage", messageObj)
         .then(() => setNewMessage(""))
@@ -119,10 +106,11 @@ function ChatDrawer() {
         position={"absolute"}
         right={5}
         bottom={5}
+        size={"lg"}
       >
         Open
       </IconButton>
-      <Drawer isOpen={isOpen} placement="right" size={"sm"} onClose={onClose}>
+      <Drawer isOpen={isOpen} placement="right" size={"md"} onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
@@ -143,7 +131,7 @@ function ChatDrawer() {
             </Select>
           </DrawerHeader>
           <DrawerBody>
-            <Box px={4} bg="gray.100">
+            <Box px={4}>
               <Box flex="1" mb={4}>
                 <List spacing={3}>
                   {[...messages]
@@ -152,8 +140,8 @@ function ChatDrawer() {
                     .map((message, index) => (
                       <ListItem
                         key={index}
-                        bg="babyBlue"
                         border="1px"
+                        bg={"gray.100"}
                         borderColor="gray.200"
                         borderRadius="md"
                         p={2}
