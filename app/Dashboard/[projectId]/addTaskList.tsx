@@ -1,93 +1,94 @@
-import { PlusIcon } from "@/utils/icons";
+import {PlusIcon} from "@/utils/icons";
 import {
-  Button,
-  Card,
-  Center,
-  FormControl,
-  FormLabel,
-  IconButton,
-  Input,
-  Popover,
-  PopoverArrow,
-  PopoverBody, PopoverCloseButton,
-  PopoverContent,
-  PopoverFooter,
-  PopoverTrigger,
-  Portal,
+    Button,
+    Card,
+    Center,
+    FormControl,
+    FormLabel,
+    IconButton,
+    Input,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverFooter,
+    PopoverTrigger,
+    Portal,
 } from "@chakra-ui/react";
 
-import React, { FormEvent, useRef, useState } from "react";
-import useSignalRContext from "@/providers/SignalRProvider";
+import React, {FormEvent, useRef, useState} from "react";
+import useHubConnection from "@/hooks/useSignalR";
+
 
 type AddTaskListProps = {
-  projectId : number;
+    projectId: number;
 };
 
-export default function AddTaskList({ projectId }: AddTaskListProps) {
-  const [taskListName, setTaskListName] = useState("");
-  const { connection } = useSignalRContext();
-  const initRef = useRef(null);
+export default function AddTaskList({projectId}: AddTaskListProps) {
+    const [taskListName, setTaskListName] = useState("");
+    const {invokeMethod} = useHubConnection('/chat');
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    connection
-      ?.invoke("CreateTaskList", taskListName)
-      .then(() => setTaskListName(""))
-      .catch((err: any) => console.error("Error sending message:", err));
-  };
+    const initRef = useRef(null);
 
-  return (
-    <Card
-      minHeight={"100%"}
-      width={"20rem"}
-      boxShadow="md"
-      borderRadius="md"
-      bg="white"
-      marginBottom="0.25rem"
-    >
-      <Center height={"100%"}>
-        <Popover initialFocusRef={initRef}>
-          {({ onClose }) => (
-            <>
-              <PopoverTrigger>
-                <IconButton
-                  aria-label="Add Task List"
-                  icon={<PlusIcon width={"auto"} height={"100%"} />}
-                  variant={"ghost"}
-                  colorScheme={"facebook"}
-                />
-              </PopoverTrigger>
-              <Portal>
-                <PopoverContent>
-                  <PopoverArrow />
-                  <PopoverCloseButton />
-                  <PopoverBody as={"form"} onSubmit={handleSubmit}>
-                    <FormControl>
-                      <FormLabel>Title of new tasklist</FormLabel>
-                      <Input
-                        type="text"
-                        ref={initRef}
-                        value={taskListName}
-                        onChange={(e) => setTaskListName(e.target.value)}
-                      />
-                    </FormControl>
-                    <PopoverFooter
-                      display={"flex"}
-                      justifyContent={"space-evenly"}
-                      width={"100%"}
-                    >
-                      <Button colorScheme="blue" type="submit">
-                        Button
-                      </Button>
-                      <Button onClick={onClose}>Close</Button>
-                    </PopoverFooter>
-                  </PopoverBody>
-                </PopoverContent>
-              </Portal>
-            </>
-          )}
-        </Popover>
-      </Center>
-    </Card>
-  );
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
+
+        invokeMethod("CreateTaskList", [taskListName]).catch(console.error);
+    };
+
+    return (
+        <Card
+            minHeight={"100%"}
+            width={"20rem"}
+            boxShadow="md"
+            borderRadius="md"
+            bg="white"
+            marginBottom="0.25rem"
+        >
+            <Center height={"100%"}>
+                <Popover initialFocusRef={initRef}>
+                    {({onClose}) => (
+                        <>
+                            <PopoverTrigger>
+                                <IconButton
+                                    aria-label="Add Task List"
+                                    icon={<PlusIcon width={"auto"} height={"100%"}/>}
+                                    variant={"ghost"}
+                                    colorScheme={"facebook"}
+                                />
+                            </PopoverTrigger>
+                            <Portal>
+                                <PopoverContent>
+                                    <PopoverArrow/>
+                                    <PopoverCloseButton/>
+                                    <PopoverBody as={"form"} onSubmit={handleSubmit}>
+                                        <FormControl>
+                                            <FormLabel>Title of new tasklist</FormLabel>
+                                            <Input
+                                                type="text"
+                                                ref={initRef}
+                                                value={taskListName}
+                                                onChange={(e) => setTaskListName(e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <PopoverFooter
+                                            display={"flex"}
+                                            justifyContent={"space-evenly"}
+                                            width={"100%"}
+                                        >
+                                            <Button colorScheme="blue" type="submit">
+                                                Button
+                                            </Button>
+                                            <Button onClick={onClose}>Close</Button>
+                                        </PopoverFooter>
+                                    </PopoverBody>
+                                </PopoverContent>
+                            </Portal>
+                        </>
+                    )}
+                </Popover>
+            </Center>
+        </Card>
+    );
 }

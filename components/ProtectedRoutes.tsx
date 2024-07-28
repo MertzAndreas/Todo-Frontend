@@ -1,7 +1,7 @@
-import React, { useEffect, ComponentType } from "react";
 import useAuthContext from "@/providers/AuthProvider";
 import { Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
+import { ComponentType, useEffect } from "react";
 
 const ProtectedRoute = <P extends object>(
   WrappedComponent: ComponentType<P>,
@@ -9,7 +9,6 @@ const ProtectedRoute = <P extends object>(
   return function WithAuth(props: P) {
     const router = useRouter();
     const { isAuthenticated } = useAuthContext();
-
     useEffect(() => {
       if (isAuthenticated === false) {
         router.push("/");
@@ -17,7 +16,7 @@ const ProtectedRoute = <P extends object>(
     }, [isAuthenticated, router]);
 
     if (isAuthenticated === null) {
-      <Text>Loading</Text>;
+      return <Text>Loading</Text>;
     }
 
     return <WrappedComponent {...props} />;

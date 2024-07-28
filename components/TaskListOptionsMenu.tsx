@@ -1,4 +1,3 @@
-import useSignalRContext from "@/providers/SignalRProvider";
 import { OptionsIcon, TrashBinIcon } from "@/utils/icons";
 import { EditIcon } from "@chakra-ui/icons";
 import {
@@ -8,8 +7,8 @@ import {
   MenuItem,
   MenuList,
 } from "@chakra-ui/react";
-import { HubConnection } from "@microsoft/signalr";
 import React from "react";
+import useHubConnection from "@/hooks/useSignalR";
 
 type TaskListOptionsMenuProps = {
   taskListId: number;
@@ -18,11 +17,11 @@ type TaskListOptionsMenuProps = {
 export default function TaskListOptionsMenu({
   taskListId,
 }: TaskListOptionsMenuProps) {
-  const { connection } = useSignalRContext();
+  const {connection: chatConnection} = useHubConnection('/chat');
 
   function handleDelete(e: React.MouseEvent): void {
     e.preventDefault();
-    connection
+    chatConnection
       ?.invoke("DeleteTaskList", taskListId)
       .catch((err) => console.error(err));
   }

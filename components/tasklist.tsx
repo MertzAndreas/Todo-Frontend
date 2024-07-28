@@ -1,80 +1,83 @@
-import {Card, CardBody, Editable, EditableInput, EditablePreview, Flex, IconButton} from "@chakra-ui/react";
-import React, { useState } from "react";
-import { TaskList } from "@/app/Dashboard/[projectId]/page";
-import { Task } from "@/components/tasks";
+import {
+    Card,
+    CardBody,
+    Editable,
+    EditableInput,
+    EditablePreview,
+    Flex,
+    IconButton,
+} from "@chakra-ui/react";
+import React, {useState} from "react";
+import {TaskList} from "@/app/Dashboard/[projectId]/page";
+import {Task} from "@/components/tasks";
 import useAuthContext from "@/providers/AuthProvider";
-import { PlusIcon } from "@/utils/icons";
+import {PlusIcon} from "@/utils/icons";
 import TaskListOptionsMenu from "./TaskListOptionsMenu";
-import useSignalRContext from "@/providers/SignalRProvider";
- 
+import {BASE_URL} from "@/utils/globals";
+import useHubConnection from "@/hooks/useSignalR";
+
 type TasklistProps = {
-  taskList: TaskList;
-  openModal?: () => void;
+    taskList: TaskList;
+    openModal?: () => void;
 };
-function formatName(longName: string){
+
+function formatName(longName: string) {
     if (longName.length > 13) {
         return longName.slice(0, 12) + "..";
     }
     return longName;
-};
+}
 
-const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
-    const { taskListId, name, tasks } = taskList;
-    const { getToken } = useAuthContext();
-    const {connection} = useSignalRContext();
+const Tasklist: React.FC<TasklistProps> = ({taskList, openModal}) => {
+    const {taskListId, name, tasks} = taskList;
+    const {getToken} = useAuthContext();
+    const {invokeMethod} = useHubConnection('/chat');
     const [longName, setLongName] = useState<string>(name);
     const [displayName, setDisplayName] = useState<string>(formatName(longName));
 
-   
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
+        e.preventDefault();
+    };
 
-  const handleDrop = (e: React.DragEvent<HTMLElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const taskListId = e.currentTarget.id;
-    const taskListParsedId = parseInt(taskListId);
-    const todoId = parseInt(e.dataTransfer.getData("text/plain"));
-    handleTodoListUpdate(taskListParsedId, todoId);
-  };
+    const handleDrop = (e: React.DragEvent<HTMLElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const taskListId = e.currentTarget.id;
+        const taskListParsedId = parseInt(taskListId);
+        const todoId = parseInt(e.dataTransfer.getData("text/plain"));
+        handleTodoListUpdate(taskListParsedId, todoId);
+    };
 
-  const handleTodoListUpdate = async (
-    taskListId: number,
-    todoId: number | null,
-  ) => {
-    if (!todoId) return;
-    await fetch("http://localhost:5040/api/Task/update_todo_list", {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        Authorization: "Bearer " + (await getToken()),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ taskId: todoId, listId: taskListId }),
-    });
+    const handleTodoListUpdate = async (
+        taskListId: number,
+        todoId: number | null,
+    ) => {
+        if (!todoId) return;
+        await fetch(`${BASE_URL}/api/Task/update_todo_list`, {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                Authorization: "Bearer " + (await getToken()),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({taskId: todoId, listId: taskListId}),
+        });
 
-    return;
-  };
+        return;
+    };
 
-  const handleDragStart = (e: React.DragEvent<HTMLElement>, todoId: number) => {
-    e.dataTransfer.setData("text/plain", todoId.toString());
-  };
+    const handleDragStart = (e: React.DragEvent<HTMLElement>, todoId: number) => {
+        e.dataTransfer.setData("text/plain", todoId.toString());
+    };
 
     const handleNameChange = (nextValue: string) => {
         setDisplayName(nextValue);
     };
 
     const handleNameUpdate = async (nextValue: string) => {
-        if (!connection) {
-            console.error("No SignalR connection available.");
-            return;
-        }
-
-        if(nextValue != null)
-        {
+        if (nextValue != null) {
             try {
-                await connection.invoke("UpdateTaskList", { Name: nextValue, TaskListId: taskListId });
+                await invokeMethod("UpdateTaskList", [{Name: nextValue, TaskListId: taskListId}]);
                 console.log(nextValue);
                 setLongName(nextValue);
                 setDisplayName(formatName(nextValue));
@@ -118,11 +121,10 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
                         onSubmit={handleNameUpdate}
                         submitOnBlur={false}
                     >
-                        <EditablePreview />
-                        <EditableInput
-                        />
+                        <EditablePreview/>
+                        <EditableInput/>
                     </Editable>
-                    <TaskListOptionsMenu taskListId={taskListId} />
+                    <TaskListOptionsMenu taskListId={taskListId}/>
                 </Flex>
                 <Flex flexDir={"column"} gap={2}>
                     <Card size="sm">
@@ -133,7 +135,7 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
                                 aria-label="Add task"
                                 variant={"ghost"}
                                 width={"100%"}
-                                icon={<PlusIcon height={"50%"} width={"auto"} />}
+                                icon={<PlusIcon height={"50%"} width={"auto"}/>}
                             />
                         </CardBody>
                     </Card>

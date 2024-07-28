@@ -15,6 +15,8 @@ import {
 import { useRouter } from "next/navigation";
 import { LoginForm } from "@/app/Account/Login/page";
 import { RegisterForm } from "@/app/Account/Register/page";
+import {BASE_URL} from "@/utils/globals";
+
 
 interface AuthContextType {
   isAuthenticated: boolean | null;
@@ -35,8 +37,8 @@ const useAuthContext = () => {
   return context;
 };
 
-const fetchNewToken = async () => {
-  const response = await fetch(`http://localhost:5040/Account/refresh-token`, {
+export const fetchNewToken = async () => {
+  const response = await fetch(`${BASE_URL}/Account/refresh-token`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -74,7 +76,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   }, []);
 
   async function login(form: LoginForm) {
-    const res = await fetch("http://localhost:5040/Account/login", {
+    const res = await fetch(`${BASE_URL}/Account/login`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -95,7 +97,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   }
 
   async function register(form: RegisterForm) {
-    const res = await fetch("http://localhost:5040/Account/register", {
+    const res = await fetch(`${BASE_URL}/Account/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
