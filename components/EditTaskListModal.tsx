@@ -8,7 +8,7 @@ import {
     ModalHeader,
     ModalOverlay, Select
 } from "@chakra-ui/react";
-import React, {useEffect, useState} from "react";
+import React from "react";
 
 type EditTaskListModalProps = {
     isOpen: boolean;
