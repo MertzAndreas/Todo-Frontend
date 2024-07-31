@@ -5,16 +5,17 @@ import {
     EditableInput,
     EditablePreview,
     Flex,
-    IconButton,
+    IconButton, useDisclosure,
 } from "@chakra-ui/react";
-import React, {useState} from "react";
-import {TaskList} from "@/app/Dashboard/[projectId]/page";
+import React, {useEffect, useState} from "react";
+import {TaskList, Todo} from "@/app/Dashboard/[projectId]/page";
 import {Task} from "@/components/tasks";
 import useAuthContext from "@/providers/AuthProvider";
 import {PlusIcon} from "@/utils/icons";
 import TaskListOptionsMenu from "./TaskListOptionsMenu";
 import {BASE_URL} from "@/utils/globals";
 import useHubConnection from "@/hooks/signalR/useSignalR";
+import EditTaskListModal from "@/components/EditTaskListModal";
 
 type TasklistProps = {
     taskList: TaskList;
@@ -34,6 +35,8 @@ const Tasklist: React.FC<TasklistProps> = ({taskList, openModal}) => {
     const {invokeMethod} = useHubConnection('/kanban');
     const [longName, setLongName] = useState<string>(name);
     const [displayName, setDisplayName] = useState<string>(formatName(longName));
+    const {isOpen, onOpen, onClose} = useDisclosure();
+    const [sortedTasks, setSortedTasks] = useState<Todo[]>(tasks);
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -87,6 +90,33 @@ const Tasklist: React.FC<TasklistProps> = ({taskList, openModal}) => {
         }
     };
 
+    useEffect(() => {
+        const sortSetting = localStorage.getItem('sortSetting');
+
+        switch (sortSetting) {
+            case '1': {
+                setSortedTasks([...tasks].sort((a, b) => a.taskId - b.taskId));
+                break;
+            }
+            case '2': {
+                setSortedTasks([...tasks].sort((a, b) => a.title.localeCompare(b.title)));
+                break;
+            }
+            case '3': {
+                setSortedTasks([...tasks].sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()));
+                break;
+            }
+            default: {
+                setSortedTasks(tasks);
+                break;
+            }
+        }
+    }, [isOpen, tasks]);
+
+    const openModalEditList = () => {
+        onOpen();
+    }
+
     return (
         <Flex
             flexDirection="column"
@@ -97,6 +127,7 @@ const Tasklist: React.FC<TasklistProps> = ({taskList, openModal}) => {
             onDrop={handleDrop}
             marginBottom="0.25rem"
         >
+            <EditTaskListModal isOpen={isOpen} onClose={onClose} taskListId={taskListId}/>
             <Card
                 minHeight={"100%"}
                 width={"20rem"}
@@ -124,7 +155,7 @@ const Tasklist: React.FC<TasklistProps> = ({taskList, openModal}) => {
                         <EditablePreview/>
                         <EditableInput/>
                     </Editable>
-                    <TaskListOptionsMenu taskListId={taskListId}/>
+                    <TaskListOptionsMenu taskListId={taskListId} openModal={() => openModalEditList()}/>
                 </Flex>
                 <Flex flexDir={"column"} gap={2}>
                     <Card size="sm">
@@ -139,7 +170,7 @@ const Tasklist: React.FC<TasklistProps> = ({taskList, openModal}) => {
                             />
                         </CardBody>
                     </Card>
-                    {tasks.map((t) => (
+                    {sortedTasks.map((t) => (
                         <Task
                             key={t.taskId}
                             task={t}
