@@ -1,14 +1,13 @@
 import {OptionsIcon, TrashBinIcon} from "@/utils/icons";
 import {EditIcon} from "@chakra-ui/icons";
 import {
-    Box, Card, Center,
     IconButton,
     Menu,
     MenuButton,
     MenuItem,
-    MenuList, Popover,
+    MenuList,
 } from "@chakra-ui/react";
-import React, {useRef} from "react";
+import React from "react";
 import useHubConnection from "@/hooks/signalR/useSignalR";
 
 
@@ -26,10 +25,6 @@ export default function TaskListOptionsMenu({
         e.preventDefault();
         invokeMethod("DeleteTaskList", [taskListId])
     }
-
-   const handleEdit = () => {
-
-   }
 
 
     return (

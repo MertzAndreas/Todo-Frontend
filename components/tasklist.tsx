@@ -127,7 +127,7 @@ const Tasklist: React.FC<TasklistProps> = ({taskList, openModal}) => {
             onDrop={handleDrop}
             marginBottom="0.25rem"
         >
-            <EditTaskListModal isOpen={isOpen} onClose={onClose} taskListId={taskListId}/>
+            <EditTaskListModal isOpen={isOpen} onClose={onClose}/>
             <Card
                 minHeight={"100%"}
                 width={"20rem"}

@@ -13,10 +13,9 @@ import React from "react";
 type EditTaskListModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    taskListId: number;
 };
 
-const EditTaskListModal = ({isOpen, onClose, taskListId}: EditTaskListModalProps) => {
+const EditTaskListModal = ({isOpen, onClose}: EditTaskListModalProps) => {
     const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         localStorage.setItem('sortSetting', event.target.value);
     };
