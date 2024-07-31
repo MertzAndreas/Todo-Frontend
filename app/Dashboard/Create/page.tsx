@@ -7,7 +7,7 @@ import {Box, Button, Flex, Heading, Input, Textarea} from "@chakra-ui/react";
 import useAuthContext from "@/providers/AuthProvider";
 import ProtectedRoute from "@/components/ProtectedRoutes";
 import {BASE_URL} from "@/utils/globals";
-import useHubConnection from "@/hooks/useSignalR";
+import useHubConnection from "@/hooks/signalR/useSignalR";
 
 type CreateProjectProps = {
     name: string;
@@ -24,8 +24,6 @@ const CreateProject = () => {
             description: "",
         };
     });
-
-    const {invokeMethod} = useHubConnection("/chat");
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
