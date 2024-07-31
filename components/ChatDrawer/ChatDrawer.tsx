@@ -18,10 +18,10 @@ import {
 } from '@chakra-ui/react';
 import React, { FormEvent, useEffect, useState } from 'react';
 import { ChatIcon } from '@chakra-ui/icons';
-import ProtectedRoute from '../ProtectedRoutes';
 import useHubConnection from '@/hooks/signalR/useSignalR';
 import { HubConnectionState } from '@microsoft/signalr';
 import MessageList from '@/components/ChatDrawer/MessageList';
+import ProtectedComponent from '@/components/ProtectedComponent';
 
 export type Message = {
     senderId: string;
@@ -166,5 +166,5 @@ function ChatDrawer() {
     );
 }
 
-const ProtectedChat = ProtectedRoute(ChatDrawer);
+const ProtectedChat = ProtectedComponent(ChatDrawer);
 export default ProtectedChat;
