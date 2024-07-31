@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
+import useAuthContext from '@/providers/AuthProvider';
 
 const Links = [{ name: 'Dashboard', link: '/Dashboard' }];
 
@@ -38,6 +39,7 @@ const NavLink = ({ children }: React.PropsWithChildren) => {
 
 export default function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { logOut } = useAuthContext();
 
     return (
         <>
@@ -78,7 +80,7 @@ export default function Navbar() {
                             </MenuButton>
                             <MenuList>
                                 <MenuItem>Account</MenuItem>
-                                <MenuItem>Log-out</MenuItem>
+                                <MenuItem onClick={logOut}>Log-out</MenuItem>
                                 <MenuDivider />
                                 <MenuItem>Link 3</MenuItem>
                             </MenuList>

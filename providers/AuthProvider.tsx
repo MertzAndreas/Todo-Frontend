@@ -1,14 +1,20 @@
-"use client";
-import React, {createContext, useCallback, useContext, useEffect, useRef, useState,} from "react";
-import {getTokenFromStorage, isTokenExpired, removeTokenFromStorage, setTokenInStorage,} from "@/utils/token";
-import {useRouter} from "next/navigation";
-import {LoginForm} from "@/app/Account/Login/page";
-import {RegisterForm} from "@/app/Account/Register/page";
-import {loginRequest} from "@/api/auth/LoginRequest";
-import {registerRequest} from "@/api/auth/RegisterRequest";
-import {fetchNewToken} from "@/api/auth/FetchNewToken";
+'use client';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import {
+    getTokenFromStorage,
+    isTokenExpired,
+    removeTokenFromStorage,
+    setTokenInStorage,
+} from '@/utils/token';
+import { useRouter } from 'next/navigation';
+import { LoginForm } from '@/app/Account/Login/page';
+import { RegisterForm } from '@/app/Account/Register/page';
+import { loginRequest } from '@/api/auth/LoginRequest';
+import { registerRequest } from '@/api/auth/RegisterRequest';
+import { fetchNewToken } from '@/api/auth/FetchNewToken';
+import { logoutRequest } from '@/api/auth/logoutRequest';
 
-export const AuthProvider = ({children}: React.PropsWithChildren) => {
+export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
     const isProcessing = useRef(false);
@@ -24,7 +30,7 @@ export const AuthProvider = ({children}: React.PropsWithChildren) => {
         } catch (error) {
             removeTokenFromStorage();
             setIsAuthenticated(false);
-            throw new Error("Failed to refresh token");
+            throw new Error('Failed to refresh token');
         } finally {
             isProcessing.current = false;
         }
@@ -34,21 +40,21 @@ export const AuthProvider = ({children}: React.PropsWithChildren) => {
         const data = await loginRequest(form);
         setTokenInStorage(data.accessToken);
         setIsAuthenticated(true);
-        router.push("/Dashboard");
+        router.push('/Dashboard');
     }
 
     async function register(form: RegisterForm) {
         const data = await registerRequest(form);
         setTokenInStorage(data.accessToken);
         setIsAuthenticated(true);
-        router.push("/Dashboard");
+        router.push('/Dashboard');
     }
 
     async function logOut() {
         setIsAuthenticated(false);
+        const data = logoutRequest(await getToken());
         removeTokenFromStorage();
-        // TODO: Implement invalidation of refresh token on backend upon logout
-        router.push("/Account/Login");
+        router.push('/Account/Login');
     }
 
     const getToken = useCallback(async () => {
@@ -59,10 +65,9 @@ export const AuthProvider = ({children}: React.PropsWithChildren) => {
             }
             return await refreshAccessToken();
         } catch (error) {
-            console.error("Error getting token:", error);
+            console.error('Error getting token:', error);
         }
     }, [refreshAccessToken]);
-
 
     const initializeAuthState = useCallback(async () => {
         try {
@@ -78,7 +83,7 @@ export const AuthProvider = ({children}: React.PropsWithChildren) => {
             }
             setIsAuthenticated(false);
         } catch (error) {
-            console.error("Error initializing authentication state:", error);
+            console.error('Error initializing authentication state:', error);
             setIsAuthenticated(false);
         }
     }, [refreshAccessToken]);
@@ -91,7 +96,7 @@ export const AuthProvider = ({children}: React.PropsWithChildren) => {
 
     const redirectToDashboardIfAuthenticated = useCallback(() => {
         if (isAuthenticated === true) {
-            router.push("/Dashboard");
+            router.push('/Dashboard');
         }
     }, [isAuthenticated, router]);
 
@@ -111,7 +116,6 @@ export const AuthProvider = ({children}: React.PropsWithChildren) => {
     );
 };
 
-
 interface AuthContextType {
     isAuthenticated: boolean | null;
     getToken: () => Promise<string>;
@@ -126,10 +130,9 @@ const AuthContext = createContext<AuthContextType | null>(null);
 const useAuthContext = () => {
     const context = useContext(AuthContext);
     if (!context) {
-        throw new Error("useAuthContext must be used within an AuthProvider");
+        throw new Error('useAuthContext must be used within an AuthProvider');
     }
     return context;
 };
-
 
 export default useAuthContext;
