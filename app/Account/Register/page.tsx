@@ -94,13 +94,17 @@ const Register = () => {
           border="1px"
           borderRadius="md"
         />
-        <Button type="submit" variant="blueButton">
+        <Flex justifyContent="space-evenly">
+
+        <Button type="submit">
           Register
         </Button>
+        <Link href="/Account/Login">
+          <Button variant={"outline"}>Already have an account</Button>
+        </Link>
+        </Flex>
       </Box>
-      <Link href="/Account/Login">
-        <Button variant="blueButton">Already have an account</Button>
-      </Link>
+      
     </Flex>
   );
 };

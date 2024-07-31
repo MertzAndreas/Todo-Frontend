@@ -10,14 +10,12 @@ export default function Home() {
               <Stack spacing={8} direction='row' justifyContent='center'>
                   <Link href='/Account/Login'>
                       <Button
-                          variant="blueButton"
                       >
                           Login
                       </Button>
                   </Link>
                   <Link href="/Account/Register">
-                      <Button
-                          variant="blueButton"
+                      <Button variant="outline"
                       >
                           Register
                       </Button>

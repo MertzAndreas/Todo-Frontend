@@ -92,7 +92,6 @@ const Page = () => {
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
-                bg="gray.200"
             >
                 {projects.length > 0 ? (
                     projects.map((project) => (
@@ -118,13 +117,13 @@ const Page = () => {
                                 Team size: {project.teamSize}
                             </Text>
                             <Link href={`/Dashboard/${project.projectId}`}>
-                                <Button variant="blueButton">View Project</Button>
+                                <Button >View Project</Button>
                             </Link>
                             <Button
+                                variant={"warning"}
                                 onClick={() =>
                                     mutate({projectId: project.projectId, getToken})
                                 }
-                                variant="redButton"
                             >
                                 Delete Project
                             </Button>
@@ -134,7 +133,7 @@ const Page = () => {
                     <Text color="gray.700">No projects available.</Text>
                 )}
                 <Link href="/Dashboard/Create">
-                    <Button variant="blueButton">Create new Project</Button>
+                    <Button variant={"outline"}>Create new Project</Button>
                 </Link>
             </Flex>
         </>

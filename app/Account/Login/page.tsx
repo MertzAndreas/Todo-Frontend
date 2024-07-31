@@ -71,13 +71,16 @@ const Login = () => {
           border="1px"
           borderRadius="md"
         />
-        <Button type="submit" variant="blueButton">
+        <Flex justifyContent="space-evenly">
+        <Button type="submit">
           Login
         </Button>
+          <Link href="/Account/Register">
+            <Button variant={"outline"}>Sign Up</Button>
+          </Link>
+        </Flex>
       </Box>
-      <Link href="/Account/Register">
-        <Button variant="greyButton">Sign Up</Button>
-      </Link>
+      
     </Flex>
   );
 };

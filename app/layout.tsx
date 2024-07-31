@@ -5,6 +5,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import Navbar from '@/components/Navbar';
 import { AuthProvider } from '@/providers/AuthProvider';
 import ChatDrawer from '@/components/ChatDrawer/ChatDrawer';
+import theme from "@/theme";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,13 +22,15 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${inter.className} bg-gray-300`}>
+            <body className={`${inter.className}`}>
                 <AuthProvider>
                     <ReactQueryProvider>
-                        <ChakraProvider>
-                            <Navbar />
-                            {children}
-                            <ChatDrawer />
+                        <ChakraProvider theme={theme}>
+                            <div className="h-screen w-screen bg-gray-300" >
+                                <Navbar />
+                                {children}
+                                <ChatDrawer />
+                            </div>
                         </ChakraProvider>
                     </ReactQueryProvider>
                 </AuthProvider>
