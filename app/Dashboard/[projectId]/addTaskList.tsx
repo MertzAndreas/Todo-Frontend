@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 
 import React, {FormEvent, useRef, useState} from "react";
-import useHubConnection from "@/hooks/useSignalR";
+import useHubConnection from "@/hooks/signalR/useSignalR";
 
 
 type AddTaskListProps = {
@@ -27,14 +27,14 @@ type AddTaskListProps = {
 
 export default function AddTaskList({projectId}: AddTaskListProps) {
     const [taskListName, setTaskListName] = useState("");
-    const {invokeMethod} = useHubConnection('/chat');
+    const {invokeMethod} = useHubConnection('/kanban');
 
     const initRef = useRef(null);
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-
-        invokeMethod("CreateTaskList", [taskListName]).catch(console.error);
+        const taskList = {name: taskListName, projectId};
+        invokeMethod("CreateTaskList", [taskList]).catch(console.error);
     };
 
     return (

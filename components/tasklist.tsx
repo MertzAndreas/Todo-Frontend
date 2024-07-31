@@ -14,7 +14,7 @@ import useAuthContext from "@/providers/AuthProvider";
 import {PlusIcon} from "@/utils/icons";
 import TaskListOptionsMenu from "./TaskListOptionsMenu";
 import {BASE_URL} from "@/utils/globals";
-import useHubConnection from "@/hooks/useSignalR";
+import useHubConnection from "@/hooks/signalR/useSignalR";
 
 type TasklistProps = {
     taskList: TaskList;
@@ -31,7 +31,7 @@ function formatName(longName: string) {
 const Tasklist: React.FC<TasklistProps> = ({taskList, openModal}) => {
     const {taskListId, name, tasks} = taskList;
     const {getToken} = useAuthContext();
-    const {invokeMethod} = useHubConnection('/chat');
+    const {invokeMethod} = useHubConnection('/kanban');
     const [longName, setLongName] = useState<string>(name);
     const [displayName, setDisplayName] = useState<string>(formatName(longName));
 
