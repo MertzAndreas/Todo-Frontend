@@ -20,7 +20,7 @@ export type Todo = {
     title: string;
     dueDate: string;
     svg: number;
-    assignedInitials: string[];
+    assignees: string[];
 };
 
 export type TaskList = {
