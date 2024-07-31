@@ -1,16 +1,15 @@
 "use client";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {notFound} from "next/navigation";
 import {Button, Flex, useDisclosure} from "@chakra-ui/react";
 import Tasklist from "@/components/tasklist";
 import NewTaskModal from "@/app/Dashboard/[projectId]/NewTaskModal";
 import ProtectedRoutes from "@/components/ProtectedRoutes";
-import useAuthContext from "@/providers/AuthProvider";
 import AddTaskList from "./addTaskList";
 import Link from "next/link";
-import {BASE_URL} from "@/utils/globals";
+import useHubConnection from "@/hooks/signalR/useSignalR";
 
-interface PageProps {
+type PageProps = {
     params: {
         projectId: string;
     };
@@ -36,6 +35,7 @@ export type Project = {
     taskLists: TaskList[];
 };
 
+
 const Page = ({params: {projectId}}: PageProps) => {
     if (isNaN(parseInt(projectId))) notFound();
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -43,27 +43,25 @@ const Page = ({params: {projectId}}: PageProps) => {
     const [selectedTaskListId, setSelectedTaskListId] = useState<null | number>(
         null,
     );
-    const {getToken} = useAuthContext();
 
-    const fetchOverview = useCallback(async () => {
-        const response = await fetch(
-            `${BASE_URL}/api/Project/project_overview/${projectId}`,
-            {
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + (await getToken()),
-                },
-            },
-        );
-        const data = await response.json();
-        console.log(data);
-        setTaskLists(data.taskLists);
-    }, [projectId, getToken]);
+    const {invokeMethod} = useHubConnection("/kanban", {
+        onEvents: {
+            NewTaskList: handleNewTaskList,
+            GetProjectOverview: handleGetProjectOverview
+        }
+    });
+
+    function handleGetProjectOverview(project: Project) {
+        setTaskLists(project.taskLists);
+    }
+
+    function handleNewTaskList(tasklist: TaskList) {
+        setTaskLists((prevTaskLists) => [...prevTaskLists, tasklist]);
+    }
 
     useEffect(() => {
-        fetchOverview();
-    }, [fetchOverview]);
+        invokeMethod("GetProjectOverview", [projectId]);
+    }, [invokeMethod, projectId]);
 
     const openModalWithTaskListId = (taskListId: number) => {
         setSelectedTaskListId(taskListId);
