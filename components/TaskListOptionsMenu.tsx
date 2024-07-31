@@ -33,7 +33,7 @@ export default function TaskListOptionsMenu({
                 as={IconButton}
                 aria-label="Options"
                 icon={<OptionsIcon width={"auto"} height={"65%"}/>}
-                variant="outline"
+                variant="ghost"
             />
             <MenuList>
                 <MenuItem onClick={handleDelete} icon={<TrashBinIcon/>}>

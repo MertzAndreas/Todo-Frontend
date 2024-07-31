@@ -91,7 +91,6 @@ function ChatDrawer() {
         <>
             <IconButton
                 aria-label="ChatIcon"
-                colorScheme="teal"
                 onClick={onOpen}
                 icon={<ChatIcon />}
                 position={'absolute'}

@@ -53,8 +53,6 @@ const CreateProject = () => {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            height="100vh"
-            bg="gray.200"
         >
             <Heading as="h1" mb={2}>
                 Create Project
@@ -73,28 +71,27 @@ const CreateProject = () => {
             >
                 <Input
                     type="text"
-                    name="projectName"
                     placeholder="Cool Project Name"
                     value={form.name}
                     onChange={(e) => setForm({...form, name: e.target.value})}
                     p={2}
-                    border="1px"
-                    borderRadius="md"
                 />
                 <Textarea
-                    name="description"
                     placeholder="Project Description"
                     value={form.description}
                     onChange={(e) => setForm({...form, description: e.target.value})}
-                    variant={"basic"}
                 />
-                <Button type="submit" variant="blueButton">
-                    Create Project
-                </Button>
+                <Flex justifyContent="space-evenly">
+                    <Button type="submit">
+                        Create Project
+                    </Button>
+                    <Link href="/Dashboard">
+                        <Button variant={"outline"}>Go Back</Button>
+                    </Link>
+                </Flex>
+                
             </Box>
-            <Link href="/Dashboard">
-                <Button variant="greyButton">Go Back</Button>
-            </Link>
+            
         </Flex>
     );
 };
