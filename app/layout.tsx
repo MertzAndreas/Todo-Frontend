@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
-import { ChakraProvider } from '@chakra-ui/react';
+import { Box, ChakraProvider, Container, Flex } from '@chakra-ui/react';
 import Navbar from '@/components/Navbar';
 import { AuthProvider } from '@/providers/AuthProvider';
 import ChatDrawer from '@/components/ChatDrawer/ChatDrawer';
-import theme from "@/theme";
+import theme from '@/theme';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,11 +26,11 @@ export default function RootLayout({
                 <AuthProvider>
                     <ReactQueryProvider>
                         <ChakraProvider theme={theme}>
-                            <div className="h-screen w-screen bg-gray-300" >
+                            <Flex flexDirection={'column'} minHeight={'100vh'} bgColor={'gray.50'}>
                                 <Navbar />
                                 {children}
                                 <ChatDrawer />
-                            </div>
+                            </Flex>
                         </ChakraProvider>
                     </ReactQueryProvider>
                 </AuthProvider>

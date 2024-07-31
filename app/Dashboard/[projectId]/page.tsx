@@ -1,19 +1,19 @@
-"use client";
-import React, {useEffect, useState} from "react";
-import {notFound} from "next/navigation";
-import {Button, Flex, useDisclosure} from "@chakra-ui/react";
-import Tasklist from "@/components/tasklist";
-import NewTaskModal from "@/app/Dashboard/[projectId]/NewTaskModal";
-import ProtectedRoutes from "@/components/ProtectedRoutes";
-import AddTaskList from "./addTaskList";
-import Link from "next/link";
-import useHubConnection from "@/hooks/signalR/useSignalR";
+'use client';
+import React, { useEffect, useState } from 'react';
+import { notFound } from 'next/navigation';
+import { Button, Flex, useDisclosure } from '@chakra-ui/react';
+import Tasklist from '@/components/tasklist';
+import NewTaskModal from '@/app/Dashboard/[projectId]/NewTaskModal';
+import ProtectedRoutes from '@/components/ProtectedRoutes';
+import AddTaskList from './addTaskList';
+import Link from 'next/link';
+import useHubConnection from '@/hooks/signalR/useSignalR';
 
 type PageProps = {
     params: {
         projectId: string;
     };
-}
+};
 
 export type Todo = {
     taskId: number;
@@ -35,20 +35,17 @@ export type Project = {
     taskLists: TaskList[];
 };
 
-
-const Page = ({params: {projectId}}: PageProps) => {
+const Page = ({ params: { projectId } }: PageProps) => {
     if (isNaN(parseInt(projectId))) notFound();
-    const {isOpen, onOpen, onClose} = useDisclosure();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const [taskLists, setTaskLists] = useState<TaskList[]>([]);
-    const [selectedTaskListId, setSelectedTaskListId] = useState<null | number>(
-        null,
-    );
+    const [selectedTaskListId, setSelectedTaskListId] = useState<null | number>(null);
 
-    const {invokeMethod} = useHubConnection("/kanban", {
+    const { invokeMethod } = useHubConnection('/kanban', {
         onEvents: {
             NewTaskList: handleNewTaskList,
-            GetProjectOverview: handleGetProjectOverview
-        }
+            GetProjectOverview: handleGetProjectOverview,
+        },
     });
 
     function handleGetProjectOverview(project: Project) {
@@ -60,7 +57,7 @@ const Page = ({params: {projectId}}: PageProps) => {
     }
 
     useEffect(() => {
-        invokeMethod("GetProjectOverview", [projectId]);
+        invokeMethod('GetProjectOverview', [projectId]);
     }, [invokeMethod, projectId]);
 
     const openModalWithTaskListId = (taskListId: number) => {
@@ -74,8 +71,8 @@ const Page = ({params: {projectId}}: PageProps) => {
     }));
 
     return (
-        <Flex flexDir={"column"} minHeight={"100%"} m={"2rem"}>
-            <Flex gap="2rem" overflowX="scroll" minHeight={"100%"}>
+        <Flex flexDir="column" flexGrow={1} m="2rem" height="100%">
+            <Flex gap="2rem" overflowX="scroll" flexGrow={1}>
                 {taskLists.map((list) => (
                     <Tasklist
                         openModal={() => openModalWithTaskListId(list.taskListId)}
@@ -83,7 +80,7 @@ const Page = ({params: {projectId}}: PageProps) => {
                         key={list.taskListId}
                     />
                 ))}
-                <AddTaskList projectId={parseInt(projectId)}/>
+                <AddTaskList projectId={parseInt(projectId)} />
             </Flex>
             <NewTaskModal
                 isOpen={isOpen}
@@ -91,16 +88,6 @@ const Page = ({params: {projectId}}: PageProps) => {
                 taskListId={selectedTaskListId}
                 taskListOptions={taskListOptions}
             />
-
-            <Button
-                maxW={"20%"}
-                alignSelf={"center"}
-                margin={"2rem"}
-                colorScheme={"facebook"}
-                variant={"outline"}
-            >
-                <Link href={"/Dashboard"}>View projects</Link>
-            </Button>
         </Flex>
     );
 };
