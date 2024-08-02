@@ -1,3 +1,5 @@
+'use client';
+
 interface DecodedToken {
     exp: number;
     iss: string;
@@ -6,6 +8,7 @@ interface DecodedToken {
     'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier': string;
     aud: string;
 }
+
 const TOKEN_KEY = 'token';
 
 export const isTokenExpired = (token: string) => {

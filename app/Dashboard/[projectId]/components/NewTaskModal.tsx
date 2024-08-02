@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from "react";
 import {
     Modal,
     ModalOverlay,
@@ -24,39 +24,46 @@ type NewTaskModalProps = {
     taskListId: number | null;
     taskListOptions: { label: string; value: number }[];
 };
-const NewTaskModal = ({ isOpen, onClose, taskListId, taskListOptions }: NewTaskModalProps) => {
-    const { getToken } = useAuthContext();
+const NewTaskModal = ({
+                          isOpen,
+                          onClose,
+                          taskListId,
+                          taskListOptions,
+                      }: NewTaskModalProps) => {
+    const {getToken} = useAuthContext();
     const [newTask, setNewTask] = useState({
-        title: '',
-        description: '',
-        dueDate: '',
-        taskListId: taskListId?.toString() ?? '',
-        iconId: '',
-        assignedUsersEmails: '',
+        title: "",
+        description: "",
+        dueDate: "",
+        taskListId: taskListId?.toString() ?? "",
+        iconId: "",
+        assignedUsersEmails: "",
     });
 
     useEffect(() => {
         if (isOpen) {
             setNewTask({
-                title: '',
-                description: '',
-                dueDate: '',
-                taskListId: taskListId?.toString() ?? '',
-                iconId: '',
-                assignedUsersEmails: '',
+                title: "",
+                description: "",
+                dueDate: "",
+                taskListId: taskListId?.toString() ?? "",
+                iconId: "",
+                assignedUsersEmails: "",
             });
         }
     }, [isOpen, taskListId]);
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+        e: React.ChangeEvent<
+            HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+        >,
     ) => {
-        const { name, value } = e.target;
-        setNewTask({ ...newTask, [name]: value });
+        const {name, value} = e.target;
+        setNewTask({...newTask, [name]: value});
     };
 
     const handleIconSelect = (iconId: string) => {
-        setNewTask({ ...newTask, iconId: iconId });
+        setNewTask({...newTask, iconId: iconId});
     };
 
     const handleSubmit = async () => {
@@ -66,42 +73,46 @@ const NewTaskModal = ({ isOpen, onClose, taskListId, taskListOptions }: NewTaskM
             iconId: +newTask.iconId,
             dueDate: new Date(newTask.dueDate).toISOString(),
             assignedUsersEmails: newTask.assignedUsersEmails
-                .split(',')
+                .split(",")
                 .map((email) => email.trim()),
         };
 
         fetch(`${BASE_URL}/api/Task`, {
-            method: 'POST',
-            credentials: 'include',
+            method: "POST",
+            credentials: "include",
             headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + (await getToken()),
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + (await getToken()),
             },
             body: JSON.stringify(data),
         });
 
         console.log(data);
         setNewTask({
-            title: '',
-            description: '',
-            dueDate: '',
-            taskListId: '',
-            iconId: '',
-            assignedUsersEmails: '',
+            title: "",
+            description: "",
+            dueDate: "",
+            taskListId: "",
+            iconId: "",
+            assignedUsersEmails: "",
         });
         onClose();
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size={'3xl'}>
+        <Modal isOpen={isOpen} onClose={onClose} size={"3xl"}>
             <ModalOverlay>
                 <ModalContent>
                     <ModalHeader>Add New Task</ModalHeader>
-                    <ModalCloseButton />
+                    <ModalCloseButton/>
                     <ModalBody>
                         <FormControl>
                             <FormLabel>Title</FormLabel>
-                            <Input name="title" value={newTask.title} onChange={handleChange} />
+                            <Input
+                                name="title"
+                                value={newTask.title}
+                                onChange={handleChange}
+                            />
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Description</FormLabel>
@@ -117,7 +128,6 @@ const NewTaskModal = ({ isOpen, onClose, taskListId, taskListOptions }: NewTaskM
                             <Input
                                 type="datetime-local"
                                 name="dueDate"
-                                min={new Date().toISOString().slice(0, -8)}
                                 value={newTask.dueDate}
                                 onChange={handleChange}
                             />
@@ -138,7 +148,7 @@ const NewTaskModal = ({ isOpen, onClose, taskListId, taskListOptions }: NewTaskM
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Task Icon</FormLabel>
-                            <IconSelector onSelect={handleIconSelect} />
+                            <IconSelector onSelect={handleIconSelect}/>
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel>Assigned Users Emails</FormLabel>

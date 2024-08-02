@@ -1,10 +1,7 @@
 'use client';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { notFound } from 'next/navigation';
 import {
-    Avatar,
-    AvatarGroup,
-    Button,
     Card,
     Flex,
     Heading,
@@ -24,7 +21,7 @@ type PageProps = {
     params: {
         projectId: string;
     };
-};
+}
 
 export type Todo = {
     taskId: number;
@@ -53,7 +50,8 @@ export type Project = {
     projectMembers: ProjectMember[];
 };
 
-const Page = ({ params: { projectId } }: PageProps) => {
+
+const Page = ({params: {projectId}}: PageProps) => {
     if (isNaN(parseInt(projectId))) notFound();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const {
@@ -104,7 +102,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
     }
 
     useEffect(() => {
-        invokeMethod('GetProjectOverview', [projectId]);
+        invokeMethod("GetProjectOverview", [projectId]);
     }, [invokeMethod, projectId]);
 
     const openModalWithTaskListId = (taskListId: number) => {

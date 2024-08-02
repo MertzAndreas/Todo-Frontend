@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import {
     Box,
     Flex,
@@ -20,7 +20,8 @@ import Link from 'next/link';
 import useAuthContext from '@/providers/AuthProvider';
 import { getUserNameFromToken } from '@/utils/token';
 
-const Links = [{ name: 'Dashboard', link: '/Dashboard' }];
+
+const Links = [{name : 'Dashboard', link : "/Dashboard"}]
 
 const NavLink = ({ children }: React.PropsWithChildren) => {
     return (
@@ -31,12 +32,11 @@ const NavLink = ({ children }: React.PropsWithChildren) => {
             _hover={{
                 textDecoration: 'none',
                 bg: useColorModeValue('gray.200', 'gray.700'),
-            }}
-        >
+            }}>
             {children}
         </Box>
-    );
-};
+    )
+}
 
 export default function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -56,9 +56,11 @@ export default function Navbar() {
                     <HStack spacing={8} alignItems={'center'}>
                         <Box>Logo</Box>
                         <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
-                            {Links.map(({ name, link }) => (
+                            {Links.map(({name, link}) => (
                                 <NavLink key={link}>
-                                    <Link href={link}>{name}</Link>
+                                    <Link href={link}>
+                                        {name}
+                                    </Link>
                                 </NavLink>
                             ))}
                         </HStack>
@@ -85,9 +87,11 @@ export default function Navbar() {
                 {isOpen ? (
                     <Box pb={4} display={{ md: 'none' }}>
                         <Stack as={'nav'} spacing={4}>
-                            {Links.map(({ link, name }) => (
+                            {Links.map(({link, name}) => (
                                 <NavLink key={link}>
-                                    <Link href={link}>{name}</Link>
+                                    <Link href={link}>
+                                        {name}
+                                    </Link>
                                 </NavLink>
                             ))}
                         </Stack>
@@ -95,5 +99,5 @@ export default function Navbar() {
                 ) : null}
             </Box>
         </>
-    );
+    )
 }
