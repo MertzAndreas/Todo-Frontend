@@ -15,7 +15,7 @@ import {
     Select,
 } from '@chakra-ui/react';
 import useAuthContext from '@/providers/AuthProvider';
-import IconSelector from './iconPicker';
+import IconSelector from './IconPicker';
 import { BASE_URL } from '@/utils/globals';
 
 type NewTaskModalProps = {
