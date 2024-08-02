@@ -1,13 +1,24 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { notFound } from 'next/navigation';
-import { Button, Flex, useDisclosure } from '@chakra-ui/react';
-import Tasklist from '@/components/tasklist';
-import NewTaskModal from '@/app/Dashboard/[projectId]/NewTaskModal';
+import {
+    Avatar,
+    AvatarGroup,
+    Button,
+    Card,
+    Flex,
+    Heading,
+    IconButton,
+    useDisclosure,
+} from '@chakra-ui/react';
+import NewTaskModal from '@/app/Dashboard/[projectId]/components/NewTaskModal';
 import ProtectedRoutes from '@/components/ProtectedRoutes';
-import AddTaskList from './addTaskList';
-import Link from 'next/link';
+import AddTaskList from './components/AddTaskList';
 import useHubConnection from '@/hooks/signalR/useSignalR';
+import { SettingsIcon } from '@chakra-ui/icons';
+import ProjectGroupBar from '@/app/Dashboard/[projectId]/components/ProjectGroupBar';
+import Tasklist from '@/app/Dashboard/[projectId]/components/Tasklist';
+import SettingsModal from '@/app/Dashboard/[projectId]/components/settings/SettingsModal';
 
 type PageProps = {
     params: {
@@ -29,31 +40,67 @@ export type TaskList = {
     tasks: Todo[];
 };
 
+export type ProjectMember = {
+    id: string;
+    name: string;
+    email: string;
+};
+
 export type Project = {
     name: string;
     projectId: number;
     taskLists: TaskList[];
+    projectMembers: ProjectMember[];
 };
 
 const Page = ({ params: { projectId } }: PageProps) => {
     if (isNaN(parseInt(projectId))) notFound();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [taskLists, setTaskLists] = useState<TaskList[]>([]);
+    const {
+        isOpen: settingsIsOpen,
+        onOpen: settingsOnOpen,
+        onClose: settingsOnClose,
+    } = useDisclosure();
+    const [project, setProject] = useState<Project | null>(null);
     const [selectedTaskListId, setSelectedTaskListId] = useState<null | number>(null);
 
-    const { invokeMethod } = useHubConnection('/kanban', {
+    const { invokeMethod, sendMessage } = useHubConnection('/kanban', {
         onEvents: {
             NewTaskList: handleNewTaskList,
             GetProjectOverview: handleGetProjectOverview,
+            AddNewUser: handleNewUser,
+            removeUser: removeUser,
         },
     });
 
+    function removeUser(user: ProjectMember) {
+        setProject((prevProject) => ({
+            ...prevProject,
+            projectMembers: prevProject.projectMembers.filter((member) => member.id !== user.id),
+        }));
+    }
+
+    function handleNewUser(user: ProjectMember) {
+        setProject((prevProject) => ({
+            ...prevProject,
+            projectMembers: [...prevProject.projectMembers, user],
+        }));
+    }
+
     function handleGetProjectOverview(project: Project) {
-        setTaskLists(project.taskLists);
+        setProject({
+            ...project,
+        });
     }
 
     function handleNewTaskList(tasklist: TaskList) {
-        setTaskLists((prevTaskLists) => [...prevTaskLists, tasklist]);
+        setProject((prevProject) => {
+            if (!prevProject) return null;
+            return {
+                ...prevProject,
+                taskLists: [...prevProject.taskLists, tasklist],
+            };
+        });
     }
 
     useEffect(() => {
@@ -65,15 +112,56 @@ const Page = ({ params: { projectId } }: PageProps) => {
         onOpen();
     };
 
-    const taskListOptions = taskLists.map((list) => ({
-        value: list.taskListId,
-        label: list.name,
-    }));
+    const handleAddGroupMember = (userId: string) => {
+        const userDTO = {
+            id: userId,
+            projectId: project.projectId,
+        };
+        sendMessage('AddUserToProject', [userDTO]);
+    };
+
+    const handleRemoveGroupMember = (userId: string) => {
+        const userDTO = {
+            id: userId,
+            projectId: project.projectId,
+        };
+        sendMessage('RemoveUserFromProject', [userDTO]);
+    };
+
+    const taskListOptions =
+        project?.taskLists.map((list) => ({
+            value: list.taskListId,
+            label: list.name,
+        })) || [];
+
+    if (!project) return null;
 
     return (
         <Flex flexDir="column" flexGrow={1} m="2rem" height="100%">
+            <Card mb={4} p={4}>
+                <Flex justifyContent="space-between" alignItems="center">
+                    <ProjectGroupBar
+                        projectMembers={project.projectMembers}
+                        addGroupMember={handleAddGroupMember}
+                    />
+                    <Heading>{project.name}</Heading>
+                    <IconButton
+                        size={'lg'}
+                        variant={'ghost'}
+                        icon={<SettingsIcon width={'auto'} height={'60%'} />}
+                        aria-label={'Settings'}
+                        onClick={settingsOnOpen}
+                    />
+                    <SettingsModal
+                        onClose={settingsOnClose}
+                        isOpen={settingsIsOpen}
+                        projectMembers={project.projectMembers}
+                        handleRemoveGroupMember={handleRemoveGroupMember}
+                    />
+                </Flex>
+            </Card>
             <Flex gap="2rem" overflowX="scroll" flexGrow={1}>
-                {taskLists.map((list) => (
+                {project.taskLists.map((list) => (
                     <Tasklist
                         openModal={() => openModalWithTaskListId(list.taskListId)}
                         taskList={list}
