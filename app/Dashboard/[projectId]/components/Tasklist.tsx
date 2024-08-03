@@ -10,18 +10,11 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { TaskList, Todo } from '@/app/Dashboard/[projectId]/page';
-import useAuthContext from '@/providers/AuthProvider';
 import { PlusIcon } from '@/utils/icons';
 import TaskListOptionsMenu from './TaskListOptionsMenu';
-import { BASE_URL } from '@/utils/globals';
 import useHubConnection from '@/hooks/signalR/useSignalR';
 import EditTaskListModal from '@/app/Dashboard/[projectId]/components/EditTaskListModal';
-import {Task} from "@/app/Dashboard/[projectId]/components/Tasks";
-
-type TasklistProps = {
-    taskList: TaskList;
-    openModal?: () => void;
-};
+import { Task } from '@/app/Dashboard/[projectId]/components/Tasks';
 
 function formatName(longName: string) {
     if (longName.length > 13) {
@@ -30,9 +23,13 @@ function formatName(longName: string) {
     return longName;
 }
 
-const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
+type TasklistProps = {
+    taskList: TaskList;
+    openModal?: () => void;
+    handleTodoListUpdate: (taskListId: number, todoId: number | null) => Promise<void>;
+};
+const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal, handleTodoListUpdate }) => {
     const { taskListId, name, tasks } = taskList;
-    const { getToken } = useAuthContext();
     const { invokeMethod } = useHubConnection('/kanban');
     const [longName, setLongName] = useState<string>(name);
     const [displayName, setDisplayName] = useState<string>(formatName(longName));
@@ -43,32 +40,24 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
         e.preventDefault();
     };
 
-    const handleDrop = (e: React.DragEvent<HTMLElement>) => {
+    const handleDrop = async (e: React.DragEvent<HTMLElement>) => {
         e.preventDefault();
         e.stopPropagation();
-        const taskListId = e.currentTarget.id;
-        const taskListParsedId = parseInt(taskListId);
-        const todoId = parseInt(e.dataTransfer.getData('text/plain'));
-        handleTodoListUpdate(taskListParsedId, todoId);
-    };
+        const data = e.dataTransfer.getData('text/plain');
+        const { todoId, listId } = JSON.parse(data);
+        const taskListParsedId = parseInt(listId);
+        const todoParsedId = parseInt(todoId);
+        if (taskListId === taskListParsedId) return;
 
-    const handleTodoListUpdate = async (taskListId: number, todoId: number | null) => {
-        if (!todoId) return;
-        await fetch(`${BASE_URL}/api/Task/update_todo_list`, {
-            method: 'PUT',
-            credentials: 'include',
-            headers: {
-                Authorization: 'Bearer ' + (await getToken()),
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ taskId: todoId, listId: taskListId }),
-        });
-
-        return;
+        await handleTodoListUpdate(taskListId, todoParsedId);
     };
 
     const handleDragStart = (e: React.DragEvent<HTMLElement>, todoId: number) => {
-        e.dataTransfer.setData('text/plain', todoId.toString());
+        const data = {
+            todoId: todoId.toString(),
+            listId: taskListId.toString(),
+        };
+        e.dataTransfer.setData('text/plain', JSON.stringify(data));
     };
 
     const handleNameChange = (nextValue: string) => {
