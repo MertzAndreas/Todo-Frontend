@@ -10,18 +10,12 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { TaskList, Todo } from '@/app/Dashboard/[projectId]/page';
-import useAuthContext from '@/providers/AuthProvider';
 import { PlusIcon } from '@/utils/icons';
 import TaskListOptionsMenu from './TaskListOptionsMenu';
-import { BASE_URL } from '@/utils/globals';
 import useHubConnection from '@/hooks/signalR/useSignalR';
 import EditTaskListModal from '@/app/Dashboard/[projectId]/components/EditTaskListModal';
-import {Task} from "@/app/Dashboard/[projectId]/components/Tasks";
-
-type TasklistProps = {
-    taskList: TaskList;
-    openModal?: () => void;
-};
+import { Task } from '@/app/Dashboard/[projectId]/components/Tasks';
+import debounce from 'lodash/debounce';
 
 function formatName(longName: string) {
     if (longName.length > 13) {
@@ -30,9 +24,32 @@ function formatName(longName: string) {
     return longName;
 }
 
-const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
+const recursiveParentWalk = (element: HTMLElement, id: number) => {
+    if (element.parentElement === null) return false;
+
+    if (parseInt(element?.id) === id) {
+        return true;
+    }
+
+    return recursiveParentWalk(element.parentElement, id);
+};
+
+type TasklistProps = {
+    taskList: TaskList;
+    openModal?: () => void;
+    handleTodoListUpdate: (taskListId: number, todoId: number | null) => Promise<void>;
+    draggingOverId: number;
+    setDraggingOverId: React.Dispatch<React.SetStateAction<number>>;
+};
+
+const Tasklist: React.FC<TasklistProps> = ({
+    taskList,
+    openModal,
+    handleTodoListUpdate,
+    draggingOverId,
+    setDraggingOverId,
+}) => {
     const { taskListId, name, tasks } = taskList;
-    const { getToken } = useAuthContext();
     const { invokeMethod } = useHubConnection('/kanban');
     const [longName, setLongName] = useState<string>(name);
     const [displayName, setDisplayName] = useState<string>(formatName(longName));
@@ -41,34 +58,43 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
+        setDraggingOverId(taskListId);
     };
 
-    const handleDrop = (e: React.DragEvent<HTMLElement>) => {
+    const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setDraggingOverId(taskListId);
+    };
+
+    const handleDragLeave = debounce((e: React.DragEvent<HTMLDivElement>) => {
+        const newTarget = e.relatedTarget as HTMLElement;
+        if (recursiveParentWalk(newTarget, taskListId)) return;
+        setDraggingOverId(null);
+    }, 50);
+
+    const handleDrop = async (e: React.DragEvent<HTMLElement>) => {
         e.preventDefault();
         e.stopPropagation();
-        const taskListId = e.currentTarget.id;
-        const taskListParsedId = parseInt(taskListId);
-        const todoId = parseInt(e.dataTransfer.getData('text/plain'));
-        handleTodoListUpdate(taskListParsedId, todoId);
-    };
+        const data = e.dataTransfer.getData('text/plain');
+        const { todoId, listId } = JSON.parse(data);
+        const taskListParsedId = parseInt(listId);
+        const todoParsedId = parseInt(todoId);
+        if (taskListId === taskListParsedId) return;
 
-    const handleTodoListUpdate = async (taskListId: number, todoId: number | null) => {
-        if (!todoId) return;
-        await fetch(`${BASE_URL}/api/Task/update_todo_list`, {
-            method: 'PUT',
-            credentials: 'include',
-            headers: {
-                Authorization: 'Bearer ' + (await getToken()),
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ taskId: todoId, listId: taskListId }),
-        });
-
-        return;
+        await handleTodoListUpdate(taskListId, todoParsedId);
+        setDraggingOverId(null);
     };
 
     const handleDragStart = (e: React.DragEvent<HTMLElement>, todoId: number) => {
-        e.dataTransfer.setData('text/plain', todoId.toString());
+        const data = {
+            todoId: todoId.toString(),
+            listId: taskListId.toString(),
+        };
+        e.dataTransfer.setData('text/plain', JSON.stringify(data));
+    };
+
+    const handleDragStop = () => {
+        setDraggingOverId(null);
     };
 
     const handleNameChange = (nextValue: string) => {
@@ -79,7 +105,6 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
         if (nextValue != null) {
             try {
                 await invokeMethod('UpdateTaskList', [{ Name: nextValue, TaskListId: taskListId }]);
-                console.log(nextValue);
                 setLongName(nextValue);
                 setDisplayName(formatName(nextValue));
             } catch (err) {
@@ -125,9 +150,11 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
             justifyContent="center"
             alignItems="start"
             id={taskListId.toString()}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
             marginBottom="0.25rem"
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
         >
             <EditTaskListModal isOpen={isOpen} onClose={onClose} />
             <Card
@@ -136,7 +163,8 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
                 padding={'1.5rem'}
                 boxShadow="md"
                 borderRadius="md"
-                bg="white"
+                transition={'background-color 0.3s ease-in-out'}
+                bg={draggingOverId === taskListId ? 'gray.100' : 'white'}
             >
                 <Flex justifyContent="space-between" alignItems="center" marginBottom="1rem">
                     <Editable
@@ -144,7 +172,6 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
                         onChange={handleNameChange}
                         onCancel={() => setDisplayName(formatName(longName))}
                         onEdit={() => {
-                            console.log(longName);
                             setDisplayName(longName);
                         }}
                         onSubmit={handleNameUpdate}
@@ -175,6 +202,7 @@ const Tasklist: React.FC<TasklistProps> = ({ taskList, openModal }) => {
                         <Task
                             key={t.taskId}
                             task={t}
+                            onDragStop={handleDragStop}
                             onDragStart={(e) => handleDragStart(e, t.taskId)}
                         />
                     ))}

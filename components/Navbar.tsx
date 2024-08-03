@@ -10,7 +10,6 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    MenuDivider,
     useDisclosure,
     useColorModeValue,
     Stack,
@@ -19,28 +18,18 @@ import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
 import useAuthContext from '@/providers/AuthProvider';
 import { getUserNameFromToken } from '@/utils/token';
+import { useEffect, useState } from 'react';
 
 const Links = [{ name: 'Dashboard', link: '/Dashboard' }];
 
-const NavLink = ({ children }: React.PropsWithChildren) => {
-    return (
-        <Box
-            px={2}
-            py={1}
-            rounded={'md'}
-            _hover={{
-                textDecoration: 'none',
-                bg: useColorModeValue('gray.200', 'gray.700'),
-            }}
-        >
-            {children}
-        </Box>
-    );
-};
-
 export default function Navbar() {
+    const [username, setUsername] = useState('');
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { logOut } = useAuthContext();
+
+    useEffect(() => {
+        setUsername(getUserNameFromToken());
+    }, []);
 
     return (
         <>
@@ -72,7 +61,7 @@ export default function Navbar() {
                                 cursor={'pointer'}
                                 minW={0}
                             >
-                                <Avatar name={getUserNameFromToken()} />
+                                <Avatar name={username} />
                             </MenuButton>
                             <MenuList>
                                 <MenuItem>Account</MenuItem>
@@ -97,3 +86,19 @@ export default function Navbar() {
         </>
     );
 }
+
+const NavLink = ({ children }: React.PropsWithChildren) => {
+    return (
+        <Box
+            px={2}
+            py={1}
+            rounded={'md'}
+            _hover={{
+                textDecoration: 'none',
+                bg: useColorModeValue('gray.200', 'gray.700'),
+            }}
+        >
+            {children}
+        </Box>
+    );
+};

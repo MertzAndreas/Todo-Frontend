@@ -6,6 +6,7 @@ interface DecodedToken {
     'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier': string;
     aud: string;
 }
+
 const TOKEN_KEY = 'token';
 
 export const isTokenExpired = (token: string) => {
@@ -26,6 +27,7 @@ export const removeTokenFromStorage = () => localStorage.removeItem(TOKEN_KEY);
 
 export const getUserNameFromToken = () => {
     const token = getTokenFromStorage();
+    if (!token) return;
     const decodedToken: DecodedToken = JSON.parse(atob(token.split('.')[1]));
     return decodedToken.username;
 };

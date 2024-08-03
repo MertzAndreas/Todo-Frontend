@@ -1,16 +1,7 @@
 'use client';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { notFound } from 'next/navigation';
-import {
-    Avatar,
-    AvatarGroup,
-    Button,
-    Card,
-    Flex,
-    Heading,
-    IconButton,
-    useDisclosure,
-} from '@chakra-ui/react';
+import { Card, Flex, Heading, IconButton, useDisclosure } from '@chakra-ui/react';
 import NewTaskModal from '@/app/Dashboard/[projectId]/components/NewTaskModal';
 import ProtectedRoutes from '@/components/ProtectedRoutes';
 import AddTaskList from './components/AddTaskList';
@@ -19,6 +10,7 @@ import { SettingsIcon } from '@chakra-ui/icons';
 import ProjectGroupBar from '@/app/Dashboard/[projectId]/components/ProjectGroupBar';
 import Tasklist from '@/app/Dashboard/[projectId]/components/Tasklist';
 import SettingsModal from '@/app/Dashboard/[projectId]/components/settings/SettingsModal';
+import { handleTransferTodo } from '@/app/Dashboard/[projectId]/api/handleTransferTodo';
 
 type PageProps = {
     params: {
@@ -63,17 +55,32 @@ const Page = ({ params: { projectId } }: PageProps) => {
     } = useDisclosure();
     const [project, setProject] = useState<Project | null>(null);
     const [selectedTaskListId, setSelectedTaskListId] = useState<null | number>(null);
+    const [draggingOverId, setDraggingOverId] = useState<number | null>();
 
-    const { invokeMethod, sendMessage } = useHubConnection('/kanban', {
+    const { sendMessage } = useHubConnection('/kanban', {
         onEvents: {
             NewTaskList: handleNewTaskList,
             GetProjectOverview: handleGetProjectOverview,
             AddNewUser: handleNewUser,
-            removeUser: removeUser,
+            RemoveUser: handleRemoveUser,
+            TransferTodo: (todoId: number, taskListId: number) => {
+                // Pass setProject to handleTransferTodo
+                handleTransferTodo(todoId, taskListId, setProject);
+            },
         },
     });
 
-    function removeUser(user: ProjectMember) {
+    useEffect(() => {
+        sendMessage('GetProjectOverview', [projectId]);
+    }, [sendMessage, projectId]);
+
+    function handleGetProjectOverview(project: Project) {
+        setProject({
+            ...project,
+        });
+    }
+
+    function handleRemoveUser(user: ProjectMember) {
         setProject((prevProject) => ({
             ...prevProject,
             projectMembers: prevProject.projectMembers.filter((member) => member.id !== user.id),
@@ -87,12 +94,6 @@ const Page = ({ params: { projectId } }: PageProps) => {
         }));
     }
 
-    function handleGetProjectOverview(project: Project) {
-        setProject({
-            ...project,
-        });
-    }
-
     function handleNewTaskList(tasklist: TaskList) {
         setProject((prevProject) => {
             if (!prevProject) return null;
@@ -103,29 +104,30 @@ const Page = ({ params: { projectId } }: PageProps) => {
         });
     }
 
-    useEffect(() => {
-        invokeMethod('GetProjectOverview', [projectId]);
-    }, [invokeMethod, projectId]);
-
     const openModalWithTaskListId = (taskListId: number) => {
         setSelectedTaskListId(taskListId);
         onOpen();
     };
 
-    const handleAddGroupMember = (userId: string) => {
+    const handleAddGroupMember = async (userId: string) => {
         const userDTO = {
             id: userId,
             projectId: project.projectId,
         };
-        sendMessage('AddUserToProject', [userDTO]);
+        await sendMessage('AddUserToProject', [userDTO]);
     };
 
-    const handleRemoveGroupMember = (userId: string) => {
+    const handleRemoveGroupMember = async (userId: string) => {
         const userDTO = {
             id: userId,
             projectId: project.projectId,
         };
-        sendMessage('RemoveUserFromProject', [userDTO]);
+        await sendMessage('RemoveUserFromProject', [userDTO]);
+    };
+
+    const handleTodoListUpdate = async (taskListId: number, todoId: number | null) => {
+        if (!todoId) return;
+        await sendMessage('TransferTodo', [todoId, taskListId]);
     };
 
     const taskListOptions =
@@ -164,6 +166,9 @@ const Page = ({ params: { projectId } }: PageProps) => {
                 {project.taskLists.map((list) => (
                     <Tasklist
                         openModal={() => openModalWithTaskListId(list.taskListId)}
+                        handleTodoListUpdate={handleTodoListUpdate}
+                        draggingOverId={draggingOverId}
+                        setDraggingOverId={setDraggingOverId}
                         taskList={list}
                         key={list.taskListId}
                     />

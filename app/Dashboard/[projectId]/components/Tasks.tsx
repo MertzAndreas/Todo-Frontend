@@ -7,6 +7,7 @@ import { getIconById } from '@/utils/idToSVG';
 type TaskProps = {
     task: Todo;
     onDragStart: (e: React.DragEvent<HTMLElement>, todoId: number) => void;
+    onDragStop?: () => void;
 };
 
 const renderAssignees = (assignees: string[]) => {
@@ -22,7 +23,7 @@ const renderAssignees = (assignees: string[]) => {
     );
 };
 
-export const Task: React.FC<TaskProps> = ({ task, onDragStart }) => {
+export const Task: React.FC<TaskProps> = ({ task, onDragStart, onDragStop }) => {
     const { title, dueDate, svg, assignees } = task;
 
     return (
@@ -32,6 +33,7 @@ export const Task: React.FC<TaskProps> = ({ task, onDragStart }) => {
             cursor={'grab'}
             onDragStart={(e) => onDragStart(e, task.taskId)}
             onClick={() => console.log('Task clicked')}
+            onDragEnd={onDragStop}
         >
             <CardBody>
                 <Heading className={'break-all'} size="md">
