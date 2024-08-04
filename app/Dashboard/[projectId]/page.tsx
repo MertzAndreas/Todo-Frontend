@@ -180,6 +180,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
                 onClose={onClose}
                 taskListId={selectedTaskListId}
                 taskListOptions={taskListOptions}
+                projectMembers={project.projectMembers}
             />
         </Flex>
     );

@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { HubUrls } from '@/utils/globals';
 import debounce from 'lodash/debounce';
-import { PhoneIcon, SearchIcon } from '@chakra-ui/icons';
+import { SearchIcon } from '@chakra-ui/icons';
 
 type InputSearchProps<T> = {
     url: HubUrls;
@@ -22,7 +22,7 @@ type InputSearchProps<T> = {
     placeholder?: string;
 };
 
-const InputSearch = <T,>({
+const HubInputSearch = <T,>({
     url,
     hubMethod,
     render,
@@ -79,4 +79,4 @@ const InputSearch = <T,>({
     );
 };
 
-export default InputSearch;
+export default HubInputSearch;

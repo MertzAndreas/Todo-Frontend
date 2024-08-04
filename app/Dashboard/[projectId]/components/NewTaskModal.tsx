@@ -13,26 +13,46 @@ import {
     FormLabel,
     Textarea,
     Select,
+    AvatarGroup,
+    Avatar,
 } from '@chakra-ui/react';
 import useAuthContext from '@/providers/AuthProvider';
 import IconSelector from './IconPicker';
 import { BASE_URL } from '@/utils/globals';
+import { ProjectMember } from '@/app/Dashboard/[projectId]/page';
+import { ProjectGroupBarProps } from '@/app/Dashboard/[projectId]/components/ProjectGroupBar';
 
 type NewTaskModalProps = {
     isOpen: boolean;
     onClose: () => void;
     taskListId: number | null;
     taskListOptions: { label: string; value: number }[];
+    projectMembers: ProjectMember[];
 };
-const NewTaskModal = ({ isOpen, onClose, taskListId, taskListOptions }: NewTaskModalProps) => {
+
+type CreateTask = {
+    title: string;
+    description: string;
+    dueDate: string;
+    taskListId: string;
+    iconId: string;
+    assignedUsersIds: string[];
+};
+const NewTaskModal = ({
+    isOpen,
+    onClose,
+    taskListId,
+    taskListOptions,
+    projectMembers,
+}: NewTaskModalProps) => {
     const { getToken } = useAuthContext();
-    const [newTask, setNewTask] = useState({
+    const [newTask, setNewTask] = useState<CreateTask>({
         title: '',
         description: '',
         dueDate: '',
         taskListId: taskListId?.toString() ?? '',
         iconId: '',
-        assignedUsersEmails: '',
+        assignedUsersIds: [],
     });
 
     useEffect(() => {
@@ -43,7 +63,7 @@ const NewTaskModal = ({ isOpen, onClose, taskListId, taskListOptions }: NewTaskM
                 dueDate: '',
                 taskListId: taskListId?.toString() ?? '',
                 iconId: '',
-                assignedUsersEmails: '',
+                assignedUsersIds: [],
             });
         }
     }, [isOpen, taskListId]);
@@ -59,16 +79,23 @@ const NewTaskModal = ({ isOpen, onClose, taskListId, taskListOptions }: NewTaskM
         setNewTask({ ...newTask, iconId: iconId });
     };
 
+    const setSelectedMembers = (membersId: string[] | ((prevMembers: string[]) => string[])) => {
+        setNewTask((prev) => ({
+            ...prev,
+            assignedUsersIds:
+                typeof membersId === 'function' ? membersId(prev.assignedUsersIds) : membersId,
+        }));
+    };
+
     const handleSubmit = async () => {
         const data = {
             ...newTask,
             taskListId: +newTask.taskListId,
             iconId: +newTask.iconId,
             dueDate: new Date(newTask.dueDate).toISOString(),
-            assignedUsersEmails: newTask.assignedUsersEmails
-                .split(',')
-                .map((email) => email.trim()),
         };
+
+        console.log(data);
 
         fetch(`${BASE_URL}/api/Task`, {
             method: 'POST',
@@ -87,7 +114,7 @@ const NewTaskModal = ({ isOpen, onClose, taskListId, taskListOptions }: NewTaskM
             dueDate: '',
             taskListId: '',
             iconId: '',
-            assignedUsersEmails: '',
+            assignedUsersIds: [],
         });
         onClose();
     };
@@ -141,12 +168,11 @@ const NewTaskModal = ({ isOpen, onClose, taskListId, taskListOptions }: NewTaskM
                             <IconSelector onSelect={handleIconSelect} />
                         </FormControl>
                         <FormControl mt={4}>
-                            <FormLabel>Assigned Users Emails</FormLabel>
-                            <Input
-                                name="assignedUsersEmails"
-                                value={newTask.assignedUsersEmails}
-                                onChange={handleChange}
-                                placeholder="Comma-separated emails"
+                            <FormLabel>Assigned Users</FormLabel>
+                            <SelectableAvatars
+                                projectMembers={projectMembers}
+                                setSelectedMembers={setSelectedMembers}
+                                selectedMembers={newTask.assignedUsersIds}
                             />
                         </FormControl>
                     </ModalBody>
@@ -161,6 +187,45 @@ const NewTaskModal = ({ isOpen, onClose, taskListId, taskListOptions }: NewTaskM
                 </ModalContent>
             </ModalOverlay>
         </Modal>
+    );
+};
+
+type SelectableAvatarsProps = {
+    projectMembers: ProjectMember[];
+    setSelectedMembers: (members: string[] | ((prevMembers: string[]) => string[])) => void;
+    selectedMembers: string[];
+};
+const SelectableAvatars = ({
+    projectMembers,
+    setSelectedMembers,
+    selectedMembers,
+}: SelectableAvatarsProps) => {
+    function handleMemberClick(e: React.MouseEvent<HTMLSpanElement>) {
+        const memberId = e.currentTarget.id;
+        if (selectedMembers.includes(memberId)) {
+            setSelectedMembers((prev) => prev.filter((id) => id !== memberId));
+        } else {
+            setSelectedMembers((prev) => [...prev, memberId]);
+        }
+    }
+
+    return (
+        <AvatarGroup size="md">
+            {projectMembers.map((member) => (
+                <Avatar
+                    id={member.id}
+                    onClick={(e) => handleMemberClick(e)}
+                    key={member.id}
+                    name={member.name}
+                    title={member.name + ' - ' + member.email}
+                    outline={selectedMembers.includes(member.id) ? '4px solid #384c8c' : ''}
+                    p={0}
+                    m={0}
+                    border="none"
+                    cursor="pointer"
+                />
+            ))}
+        </AvatarGroup>
     );
 };
 
