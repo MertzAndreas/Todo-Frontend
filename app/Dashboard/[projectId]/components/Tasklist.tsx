@@ -6,6 +6,7 @@ import {
     EditablePreview,
     Flex,
     IconButton,
+    useColorMode,
     useDisclosure,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
@@ -159,15 +160,18 @@ const Tasklist: React.FC<TasklistProps> = ({
             <EditTaskListModal isOpen={isOpen} onClose={onClose} />
             <Card
                 minHeight={'100%'}
+                variant={draggingOverId === taskListId ? 'hovered' : 'elevated'}
                 width={'20rem'}
                 padding={'1.5rem'}
                 boxShadow="md"
                 borderRadius="md"
                 transition={'background-color 0.3s ease-in-out'}
-                bg={draggingOverId === taskListId ? 'gray.100' : 'white'}
             >
                 <Flex justifyContent="space-between" alignItems="center" marginBottom="1rem">
                     <Editable
+                        as={'h2'}
+                        fontSize="2xl"
+                        fontWeight={'bold'}
                         value={displayName}
                         onChange={handleNameChange}
                         onCancel={() => setDisplayName(formatName(longName))}
@@ -186,11 +190,10 @@ const Tasklist: React.FC<TasklistProps> = ({
                     />
                 </Flex>
                 <Flex flexDir={'column'} gap={2}>
-                    <Card size="sm">
+                    <Card size="sm" variant={'secondary'}>
                         <CardBody padding={0}>
                             <IconButton
                                 onClick={openModal}
-                                colorScheme="facebook"
                                 aria-label="Add task"
                                 variant={'ghost'}
                                 width={'100%'}

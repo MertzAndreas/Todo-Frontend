@@ -13,17 +13,20 @@ import {
     useDisclosure,
     useColorModeValue,
     Stack,
+    Divider,
+    useColorMode,
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
 import useAuthContext from '@/providers/AuthProvider';
 import { getUserNameFromToken } from '@/utils/token';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Links = [{ name: 'Dashboard', link: '/Dashboard' }];
 
 export default function Navbar() {
     const [username, setUsername] = useState('');
+    const { toggleColorMode, colorMode } = useColorMode();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { logOut } = useAuthContext();
 
@@ -66,6 +69,8 @@ export default function Navbar() {
                             <MenuList>
                                 <MenuItem>Account</MenuItem>
                                 <MenuItem onClick={logOut}>Log-out</MenuItem>
+                                <Divider />
+                                <MenuItem onClick={toggleColorMode}>Theme {colorMode}</MenuItem>
                             </MenuList>
                         </Menu>
                     </Flex>

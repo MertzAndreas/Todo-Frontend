@@ -4,7 +4,20 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useQueryClient } from '@tanstack/react-query';
-import { Box, Button, Flex, Heading, Input, Textarea } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    ButtonGroup,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
+    Flex,
+    Heading,
+    Input,
+    Stack,
+    Textarea,
+} from '@chakra-ui/react';
 import useAuthContext from '@/providers/AuthProvider';
 import ProtectedRoute from '@/components/ProtectedRoutes';
 import { BASE_URL } from '@/utils/globals';
@@ -21,7 +34,7 @@ const CreateProject = () => {
     const [form, setForm] = useState<CreateProjectProps>({ name: '', description: '' });
     const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
 
@@ -56,41 +69,36 @@ const CreateProject = () => {
             m={'auto'}
             width={'100%'}
         >
-            <Heading as="h1" mb={4}>
-                Create Project
-            </Heading>
-            <Box
-                as="form"
-                onSubmit={handleSubmit}
-                width="60%"
-                p={8}
-                bg="white"
-                borderRadius="lg"
-                shadow="lg"
-                display="flex"
-                flexDirection="column"
-                gap={4}
-            >
-                <Input
-                    type="text"
-                    placeholder="Cool Project Name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    p={2}
-                />
-                <Textarea
-                    placeholder="Project Description"
-                    value={form.description}
-                    onChange={(e) => setForm({ ...form, description: e.target.value })}
-                />
-                {error && <Box color="red.500">{error}</Box>}
-                <Flex justifyContent="space-evenly">
-                    <Button type="submit">Create Project</Button>
-                    <Link href="/Dashboard">
-                        <Button variant="outline">Go Back</Button>
-                    </Link>
-                </Flex>
-            </Box>
+            <Card as="form" onSubmit={handleSubmit} width="60%" p={8} borderRadius="lg" shadow="lg">
+                <CardHeader>
+                    <Heading as="h1">Create Project</Heading>
+                </CardHeader>
+                <CardBody>
+                    <Stack gap={4}>
+                        <Input
+                            type="text"
+                            placeholder="Cool Project Name"
+                            value={form.name}
+                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            p={2}
+                        />
+                        <Textarea
+                            placeholder="Project Description"
+                            value={form.description}
+                            onChange={(e) => setForm({ ...form, description: e.target.value })}
+                        />
+                        {error && <Box color="red.500">{error}</Box>}
+                    </Stack>
+                </CardBody>
+                <CardFooter>
+                    <ButtonGroup gap={4}>
+                        <Button type="submit">Create Project</Button>
+                        <Link href="/Dashboard">
+                            <Button variant="outline">Go Back</Button>
+                        </Link>
+                    </ButtonGroup>
+                </CardFooter>
+            </Card>
         </Flex>
     );
 };

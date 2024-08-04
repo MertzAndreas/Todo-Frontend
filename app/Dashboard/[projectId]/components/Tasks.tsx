@@ -1,6 +1,6 @@
 import React from 'react';
 import { Todo } from '@/app/Dashboard/[projectId]/page';
-import { Avatar, AvatarGroup, Card, CardBody, Flex, Heading, Text } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Card, CardBody, Flex, Heading, Text } from '@chakra-ui/react';
 import formatDateOrCountdown from '@/utils/formatDateOrCountdown';
 import { getIconById } from '@/utils/idToSVG';
 
@@ -29,6 +29,7 @@ export const Task: React.FC<TaskProps> = ({ task, onDragStart, onDragStop }) => 
     return (
         <Card
             size="md"
+            variant={'secondary'}
             draggable="true"
             cursor={'grab'}
             onDragStart={(e) => onDragStart(e, task.taskId)}
@@ -36,10 +37,12 @@ export const Task: React.FC<TaskProps> = ({ task, onDragStart, onDragStop }) => 
             onDragEnd={onDragStop}
         >
             <CardBody>
-                <Heading className={'break-all'} size="md">
-                    {title}
-                </Heading>
-                <Text>{formatDateOrCountdown(dueDate)}</Text>
+                <Box>
+                    <Heading as={'h3'} fontWeight={'500'} className={'break-all'} size="md">
+                        {title}
+                    </Heading>
+                    <Text fontWeight={'200'}>{formatDateOrCountdown(dueDate)}</Text>
+                </Box>
                 <Flex flexDirection="row" justifyContent="space-between" mt={1}>
                     {renderAssignees(assignees)}
                     <Text>{getIconById(svg, { width: '2rem', height: '2rem' })}</Text>
