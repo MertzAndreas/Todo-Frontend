@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { ProjectMember } from '@/app/Dashboard/[projectId]/page';
 import { AddIcon } from '@chakra-ui/icons';
-import InputSearch from '@/components/InputSearch';
+import HubInputSearch from '@/components/HubInputSearch';
 import React from 'react';
 
 type AddGroupMemberProps = {
@@ -104,7 +104,7 @@ export const AddGroupMember = ({ projectMembers, addGroupMember }: AddGroupMembe
                     <ModalHeader>Add members to project</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <InputSearch<ProjectMember>
+                        <HubInputSearch<ProjectMember>
                             url={'/kanban'}
                             hubMethod={'SearchUsers'}
                             placeholder={'Search for users by mail'}
