@@ -1,7 +1,19 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Box, Button, Flex, Heading, Input } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    ButtonGroup,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
+    Flex,
+    Heading,
+    Input,
+    Stack,
+} from '@chakra-ui/react';
 import useAuthContext from '@/providers/AuthProvider';
 
 export type LoginForm = {
@@ -37,46 +49,52 @@ const Login = () => {
             m={'auto'}
             width={'100%'}
         >
-            <Heading variant="basic">Login to your Account</Heading>
-            <Box
+            <Card
                 as="form"
                 onSubmit={handleSubmit}
                 width="60%"
-                p={8}
-                bg="white"
+                align={'center'}
+                p={4}
                 borderRadius="lg"
                 shadow="lg"
-                display="flex"
-                flexDirection="column"
-                gap={4}
             >
-                <Input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={form.email}
-                    onChange={handleChange}
-                    p={2}
-                    border="1px"
-                    borderRadius="md"
-                />
-                <Input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={form.password}
-                    onChange={handleChange}
-                    p={2}
-                    border="1px"
-                    borderRadius="md"
-                />
-                <Flex justifyContent="space-evenly">
-                    <Button type="submit">Login</Button>
-                    <Link href="/Account/Register">
-                        <Button variant={'outline'}>Sign Up</Button>
-                    </Link>
-                </Flex>
-            </Box>
+                <CardHeader>
+                    <Heading>Login to your Account</Heading>
+                </CardHeader>
+                <CardBody width={'80%'}>
+                    <Stack spacing={4}>
+                        <Input
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            value={form.email}
+                            onChange={handleChange}
+                            p={2}
+                            border="1px"
+                            borderRadius="md"
+                        />
+                        <Input
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            value={form.password}
+                            onChange={handleChange}
+                            p={2}
+                            border="1px"
+                            borderRadius="md"
+                        />
+                    </Stack>
+                </CardBody>
+
+                <CardFooter justifyContent="space-evenly">
+                    <ButtonGroup spacing={'5'}>
+                        <Button type="submit">Login</Button>
+                        <Link href="/Account/Register">
+                            <Button variant={'outline'}>Sign Up</Button>
+                        </Link>
+                    </ButtonGroup>
+                </CardFooter>
+            </Card>
         </Flex>
     );
 };

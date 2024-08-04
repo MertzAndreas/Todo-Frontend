@@ -40,7 +40,7 @@ export default function AddTaskList({ projectId }: AddTaskListProps) {
 
     return (
         <Flex marginBottom="0.25rem">
-            <Card minHeight={'100%'} width={'20rem'} boxShadow="md" borderRadius="md" bg="white">
+            <Card minHeight={'100%'} width={'20rem'} boxShadow="md" borderRadius="md">
                 <CardBody>
                     <Center height={'100%'}>
                         <Popover initialFocusRef={initRef}>

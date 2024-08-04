@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
-import { Box, ChakraProvider, Container, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import Navbar from '@/components/Navbar';
 import { AuthProvider } from '@/providers/AuthProvider';
 import ChatDrawer from '@/components/ChatDrawer/ChatDrawer';
-import theme from '@/theme';
+import ThemeProvider from '@/providers/ThemeProvider';
+import React from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,13 +26,13 @@ export default function RootLayout({
             <body className={`${inter.className}`}>
                 <AuthProvider>
                     <ReactQueryProvider>
-                        <ChakraProvider theme={theme}>
-                            <Flex flexDirection={'column'} minHeight={'100vh'} bgColor={'gray.50'}>
+                        <Flex flexDirection={'column'} minHeight={'100vh'}>
+                            <ThemeProvider>
                                 <Navbar />
                                 {children}
                                 <ChatDrawer />
-                            </Flex>
-                        </ChakraProvider>
+                            </ThemeProvider>
+                        </Flex>
                     </ReactQueryProvider>
                 </AuthProvider>
             </body>

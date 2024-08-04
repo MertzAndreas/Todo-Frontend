@@ -1,19 +1,19 @@
 'use client';
 import React from 'react';
-import Link from 'next/link';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
+import { Button, Flex, SimpleGrid, Text, Link, Box } from '@chakra-ui/react';
 import ProtectedRoutes from '@/components/ProtectedRoutes';
 import useAuthContext from '@/providers/AuthProvider';
 import { BASE_URL } from '@/utils/globals';
+import { ProjectMember } from '@/app/Dashboard/[projectId]/page';
+import ProjectCard from '@/app/Dashboard/ProjectCard';
 
-interface Project {
+export type DashboardProject = {
     projectId: number;
     name: string;
     description: string;
-    creatorName: string;
-    teamSize: number;
-}
+    projectMembers: ProjectMember[];
+};
 
 const fetchProjects = async (getToken: () => Promise<string>) => {
     const response = await fetch(`${BASE_URL}/api/Project/get_projects`, {
@@ -62,7 +62,7 @@ const Page = () => {
         data: projects = [],
         isLoading,
         error,
-    } = useQuery<Project[]>({
+    } = useQuery<DashboardProject[]>({
         queryKey: ['projects'],
         queryFn: () => fetchProjects(getToken),
         staleTime: 1000 * 60 * 2,
@@ -71,7 +71,7 @@ const Page = () => {
     const { mutate } = useMutation({
         mutationFn: deleteProject,
         onSuccess: (deletedProjectId) => {
-            queryClient.setQueryData<Project[]>(['projects'], (oldProjects) =>
+            queryClient.setQueryData<DashboardProject[]>(['projects'], (oldProjects) =>
                 oldProjects?.filter((project) => project.projectId !== deletedProjectId),
             );
         },
@@ -92,46 +92,28 @@ const Page = () => {
                 m={'auto'}
                 width={'100%'}
             >
-                {projects.length > 0 ? (
-                    projects.map((project) => (
-                        <Box
-                            key={project.projectId}
-                            bg="white"
-                            p={6}
-                            mb={4}
-                            borderRadius="lg"
-                            shadow="md"
-                            width="60%"
-                        >
-                            <Heading as="h2" mb={2}>
-                                {project.name}
-                            </Heading>
-                            <Text mb={2} color="gray.700">
-                                {project.description}
-                            </Text>
-                            <Text mb={1} color="gray.500">
-                                Created by: {project.creatorName}
-                            </Text>
-                            <Text mb={4} color="gray.500">
-                                Team size: {project.teamSize}
-                            </Text>
-                            <Link href={`/Dashboard/${project.projectId}`}>
-                                <Button>View Project</Button>
-                            </Link>
-                            <Button
-                                variant={'warning'}
-                                onClick={() => mutate({ projectId: project.projectId, getToken })}
-                            >
-                                Delete Project
-                            </Button>
-                        </Box>
-                    ))
-                ) : (
-                    <Text color="gray.700">No projects available.</Text>
-                )}
-                <Link href="/Dashboard/Create">
-                    <Button variant={'outline'}>Create new Project</Button>
-                </Link>
+                <SimpleGrid
+                    columns={[1, 2]}
+                    gap="40px" // Adjust the spacing as needed'
+                    width="90%"
+                >
+                    {projects.length > 0 ? (
+                        projects.map((project) => (
+                            <ProjectCard
+                                key={project.projectId}
+                                project={project}
+                                mutate={() => mutate({ projectId: project.projectId, getToken })}
+                            />
+                        ))
+                    ) : (
+                        <Text color="gray.700">No projects available.</Text>
+                    )}
+                </SimpleGrid>
+                <Box mt={4}>
+                    <Link href="/Dashboard/Create">
+                        <Button variant={'outline'}>Create new Project</Button>
+                    </Link>
+                </Box>
             </Flex>
         </>
     );
