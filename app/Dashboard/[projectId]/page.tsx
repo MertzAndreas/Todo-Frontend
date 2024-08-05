@@ -1,12 +1,12 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { notFound } from 'next/navigation';
+import { SettingsIcon } from '@chakra-ui/icons';
 import { Card, Flex, Heading, IconButton, useDisclosure } from '@chakra-ui/react';
 import NewTaskModal from '@/app/Dashboard/[projectId]/components/NewTaskModal';
 import ProtectedRoutes from '@/components/ProtectedRoutes';
 import AddTaskList from './components/AddTaskList';
 import useHubConnection from '@/hooks/signalR/useSignalR';
-import { SettingsIcon } from '@chakra-ui/icons';
 import ProjectGroupBar from '@/app/Dashboard/[projectId]/components/ProjectGroupBar';
 import Tasklist from '@/app/Dashboard/[projectId]/components/Tasklist';
 import SettingsModal from '@/app/Dashboard/[projectId]/components/settings/SettingsModal';
@@ -23,7 +23,7 @@ export type Todo = {
     title: string;
     dueDate: string;
     svg: number;
-    assignees: string[];
+    assigneeIds: string[];
 };
 
 export type TaskList = {
@@ -56,6 +56,8 @@ const Page = ({ params: { projectId } }: PageProps) => {
     const [project, setProject] = useState<Project | null>(null);
     const [selectedTaskListId, setSelectedTaskListId] = useState<null | number>(null);
     const [draggingOverId, setDraggingOverId] = useState<number | null>();
+    const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+    const usersRef = useRef<ProjectMember[] | null>(null);
 
     const { sendMessage } = useHubConnection('/kanban', {
         onEvents: {
@@ -75,12 +77,14 @@ const Page = ({ params: { projectId } }: PageProps) => {
     }, [sendMessage, projectId]);
 
     function handleGetProjectOverview(project: Project) {
+        usersRef.current = project.projectMembers;
         setProject({
             ...project,
         });
     }
 
     function handleRemoveUser(user: ProjectMember) {
+        usersRef.current = usersRef.current?.filter((member) => member.id !== user.id);
         setProject((prevProject) => ({
             ...prevProject,
             projectMembers: prevProject.projectMembers.filter((member) => member.id !== user.id),
@@ -88,6 +92,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
     }
 
     function handleNewUser(user: ProjectMember) {
+        usersRef.current = usersRef.current ? [...usersRef.current, user] : [user];
         setProject((prevProject) => ({
             ...prevProject,
             projectMembers: [...prevProject.projectMembers, user],
@@ -103,6 +108,10 @@ const Page = ({ params: { projectId } }: PageProps) => {
             };
         });
     }
+
+    const getUserById = (id: string) => {
+        return usersRef.current?.find((user) => user.id === id);
+    };
 
     const openModalWithTaskListId = (taskListId: number) => {
         setSelectedTaskListId(taskListId);
@@ -145,6 +154,8 @@ const Page = ({ params: { projectId } }: PageProps) => {
                     <ProjectGroupBar
                         projectMembers={project.projectMembers}
                         addGroupMember={handleAddGroupMember}
+                        selectedMembers={selectedMembers}
+                        setSelectedMembers={setSelectedMembers}
                     />
                     <Heading>{project.name}</Heading>
                     <IconButton
@@ -168,6 +179,8 @@ const Page = ({ params: { projectId } }: PageProps) => {
                         openModal={() => openModalWithTaskListId(list.taskListId)}
                         handleTodoListUpdate={handleTodoListUpdate}
                         draggingOverId={draggingOverId}
+                        selectedMembers={selectedMembers}
+                        getUserById={getUserById}
                         setDraggingOverId={setDraggingOverId}
                         taskList={list}
                         key={list.taskListId}

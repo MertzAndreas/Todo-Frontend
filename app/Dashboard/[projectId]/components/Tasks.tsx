@@ -1,5 +1,5 @@
 import React from 'react';
-import { Todo } from '@/app/Dashboard/[projectId]/page';
+import { ProjectMember, Todo } from '@/app/Dashboard/[projectId]/page';
 import { Avatar, AvatarGroup, Box, Card, CardBody, Flex, Heading, Text } from '@chakra-ui/react';
 import formatDateOrCountdown from '@/utils/formatDateOrCountdown';
 import { getIconById } from '@/utils/idToSVG';
@@ -7,24 +7,27 @@ import { getIconById } from '@/utils/idToSVG';
 type TaskProps = {
     task: Todo;
     onDragStart: (e: React.DragEvent<HTMLElement>, todoId: number) => void;
-    onDragStop?: () => void;
+    onDragStop: () => void;
+    getUserById: (id: string) => ProjectMember;
 };
 
-const renderAssignees = (assignees: string[]) => {
+const renderAssignees = (assignees: ProjectMember[]) => {
     if (assignees.length === 0) return <></>;
-    if (assignees.length === 1) return <Avatar size={'sm'} name={assignees[0]} />;
+    if (assignees.length === 1) return <Avatar size={'sm'} name={assignees[0].name} />;
 
     return (
         <AvatarGroup>
             {assignees.map((assignee, index) => {
-                return <Avatar size={'sm'} key={index} name={assignee} />;
+                return <Avatar size={'sm'} key={index} name={assignee.name} />;
             })}
         </AvatarGroup>
     );
 };
 
-export const Task: React.FC<TaskProps> = ({ task, onDragStart, onDragStop }) => {
-    const { title, dueDate, svg, assignees } = task;
+export const Task: React.FC<TaskProps> = ({ task, onDragStart, onDragStop, getUserById }) => {
+    const { title, dueDate, svg, assigneeIds } = task;
+
+    const assignees = assigneeIds.map((assId) => getUserById(assId));
 
     return (
         <Card
