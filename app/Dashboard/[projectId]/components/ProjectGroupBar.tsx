@@ -6,10 +6,16 @@ import { AddGroupMember } from '@/app/Dashboard/[projectId]/components/AddGroupM
 export type ProjectGroupBarProps = {
     projectMembers: ProjectMember[];
     addGroupMember: (userId: string) => void;
+    selectedMembers: string[];
+    setSelectedMembers: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-const ProjectGroupBar = ({ projectMembers, addGroupMember }: ProjectGroupBarProps) => {
-    const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+const ProjectGroupBar = ({
+    projectMembers,
+    addGroupMember,
+    selectedMembers,
+    setSelectedMembers,
+}: ProjectGroupBarProps) => {
     if (!projectMembers)
         return <AddGroupMember projectMembers={projectMembers} addGroupMember={addGroupMember} />;
 

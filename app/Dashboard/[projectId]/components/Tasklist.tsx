@@ -10,13 +10,14 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { TaskList, Todo } from '@/app/Dashboard/[projectId]/page';
+import { ProjectMember, TaskList, Todo } from '@/app/Dashboard/[projectId]/page';
 import { PlusIcon } from '@/utils/icons';
 import TaskListOptionsMenu from './TaskListOptionsMenu';
 import useHubConnection from '@/hooks/signalR/useSignalR';
 import EditTaskListModal from '@/app/Dashboard/[projectId]/components/EditTaskListModal';
 import { Task } from '@/app/Dashboard/[projectId]/components/Tasks';
 import debounce from 'lodash/debounce';
+import { sort } from 'next/dist/build/webpack/loaders/css-loader/src/utils';
 
 function formatName(longName: string) {
     if (longName.length > 13) {
@@ -41,6 +42,8 @@ type TasklistProps = {
     handleTodoListUpdate: (taskListId: number, todoId: number | null) => Promise<void>;
     draggingOverId: number;
     setDraggingOverId: React.Dispatch<React.SetStateAction<number>>;
+    selectedMembers?: string[];
+    getUserById: (id: string) => ProjectMember;
 };
 
 const Tasklist: React.FC<TasklistProps> = ({
@@ -49,6 +52,8 @@ const Tasklist: React.FC<TasklistProps> = ({
     handleTodoListUpdate,
     draggingOverId,
     setDraggingOverId,
+    selectedMembers,
+    getUserById,
 }) => {
     const { taskListId, name, tasks } = taskList;
     const { invokeMethod } = useHubConnection('/kanban');
@@ -145,6 +150,16 @@ const Tasklist: React.FC<TasklistProps> = ({
         onOpen();
     };
 
+    //Filter tasks such that only tasks which has at least one task.assignedIds which is equal to selectedMembers, if any are selected otherwise show all
+    const filteredTasks =
+        selectedMembers.length === 0
+            ? sortedTasks
+            : sortedTasks.filter((task) =>
+                  task.assigneeIds.some((id) => selectedMembers.includes(id)),
+              );
+
+    console.log(filteredTasks);
+
     return (
         <Flex
             flexDirection="column"
@@ -201,11 +216,12 @@ const Tasklist: React.FC<TasklistProps> = ({
                             />
                         </CardBody>
                     </Card>
-                    {sortedTasks.map((t) => (
+                    {filteredTasks.map((t) => (
                         <Task
                             key={t.taskId}
                             task={t}
                             onDragStop={handleDragStop}
+                            getUserById={getUserById}
                             onDragStart={(e) => handleDragStart(e, t.taskId)}
                         />
                     ))}
