@@ -158,8 +158,6 @@ const Tasklist: React.FC<TasklistProps> = ({
                   task.assigneeIds.some((id) => selectedMembers.includes(id)),
               );
 
-    console.log(filteredTasks);
-
     return (
         <Flex
             flexDirection="column"

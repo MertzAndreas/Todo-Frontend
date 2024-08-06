@@ -30,8 +30,6 @@ export default function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { logOut, isAuthenticated } = useAuthContext();
 
-    console.log(isAuthenticated);
-
     useEffect(() => {
         if (isAuthenticated) {
             setUsername(getUserNameFromToken());

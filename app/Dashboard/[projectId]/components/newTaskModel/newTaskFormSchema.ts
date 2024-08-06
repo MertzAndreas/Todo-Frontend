@@ -5,6 +5,7 @@ export const newTaskFormSchema = z.object({
     title: z.string().min(1, { message: 'Title is required' }),
     description: z.string().min(1, { message: 'Description is required' }),
     dueDate: z.string().min(1, { message: 'Due date is required' }),
+    projectId: z.number(),
     taskListId: z.string().min(1, { message: 'Task list is required' }),
     iconId: z.string().min(1, { message: 'Icon is required' }),
     assignedUsersIds: z.array(z.string()),
