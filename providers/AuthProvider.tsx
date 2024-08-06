@@ -7,12 +7,12 @@ import {
     setTokenInStorage,
 } from '@/utils/token';
 import { useRouter } from 'next/navigation';
-import { LoginForm } from '@/app/Account/Login/page';
-import { RegisterForm } from '@/app/Account/Register/page';
+import { LoginFormValues } from '@/app/Account/Login/page';
 import { loginRequest } from '@/api/auth/LoginRequest';
 import { registerRequest } from '@/api/auth/RegisterRequest';
 import { fetchNewToken } from '@/api/auth/FetchNewToken';
 import { logoutRequest } from '@/api/auth/logoutRequest';
+import { RegisterFormValues } from '@/app/Account/Register/registerFormSchema';
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     const router = useRouter();
@@ -36,14 +36,14 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
         }
     }, []);
 
-    async function login(form: LoginForm) {
+    async function login(form: LoginFormValues) {
         const data = await loginRequest(form);
         setTokenInStorage(data.accessToken);
         setIsAuthenticated(true);
         router.push('/Dashboard');
     }
 
-    async function register(form: RegisterForm) {
+    async function register(form: RegisterFormValues) {
         const data = await registerRequest(form);
         setTokenInStorage(data.accessToken);
         setIsAuthenticated(true);
@@ -52,8 +52,9 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
 
     async function logOut() {
         setIsAuthenticated(false);
-        const data = logoutRequest(await getToken());
+        const token = await getToken();
         removeTokenFromStorage();
+        await logoutRequest(token);
         router.push('/Account/Login');
     }
 
@@ -119,7 +120,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
 interface AuthContextType {
     isAuthenticated: boolean | null;
     getToken: () => Promise<string>;
-    login: (form: LoginForm) => Promise<void>;
+    login: (form: LoginFormValues) => Promise<void>;
     logOut: () => void;
     register: (form: RegisterForm) => Promise<void>;
     redirectToDashboardIfAuthenticated: () => void;

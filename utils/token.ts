@@ -27,7 +27,7 @@ export const removeTokenFromStorage = () => localStorage.removeItem(TOKEN_KEY);
 
 export const getUserNameFromToken = () => {
     const token = getTokenFromStorage();
-    if (!token) return;
+    if (!token) return '';
     const decodedToken: DecodedToken = JSON.parse(atob(token.split('.')[1]));
     return decodedToken.username;
 };

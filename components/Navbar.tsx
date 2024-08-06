@@ -16,7 +16,7 @@ import {
     Divider,
     useColorMode,
 } from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { HamburgerIcon, CloseIcon, SettingsIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
 import useAuthContext from '@/providers/AuthProvider';
 import { getUserNameFromToken } from '@/utils/token';
@@ -28,11 +28,17 @@ export default function Navbar() {
     const [username, setUsername] = useState('');
     const { toggleColorMode, colorMode } = useColorMode();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { logOut } = useAuthContext();
+    const { logOut, isAuthenticated } = useAuthContext();
+
+    console.log(isAuthenticated);
 
     useEffect(() => {
-        setUsername(getUserNameFromToken());
-    }, []);
+        if (isAuthenticated) {
+            setUsername(getUserNameFromToken());
+        } else {
+            setUsername('');
+        }
+    }, [isAuthenticated]);
 
     return (
         <>
@@ -63,8 +69,13 @@ export default function Navbar() {
                                 variant={'link'}
                                 cursor={'pointer'}
                                 minW={0}
+                                width={'2rem'}
                             >
-                                <Avatar name={username} />
+                                {username ? (
+                                    <Avatar name={username} />
+                                ) : (
+                                    <SettingsIcon width={'80%'} height={'auto'} />
+                                )}
                             </MenuButton>
                             <MenuList>
                                 <MenuItem>Account</MenuItem>

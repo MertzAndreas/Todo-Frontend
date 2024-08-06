@@ -17,25 +17,37 @@ import {
     Input,
     Stack,
     Textarea,
+    FormControl,
+    FormLabel,
+    FormErrorMessage,
 } from '@chakra-ui/react';
 import useAuthContext from '@/providers/AuthProvider';
 import ProtectedRoute from '@/components/ProtectedRoutes';
 import { BASE_URL } from '@/utils/globals';
-
-type CreateProjectProps = {
-    name: string;
-    description: string;
-};
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+    createProjectFormSchema,
+    CreateProjectFormValues,
+    createProjectDefaultFormValues,
+} from '@/app/Dashboard/Create/createProjectFormSchema';
 
 const CreateProject = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
     const { getToken } = useAuthContext();
-    const [form, setForm] = useState<CreateProjectProps>({ name: '', description: '' });
     const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const {
+        handleSubmit,
+        register,
+        formState: { errors, isSubmitting },
+    } = useForm<CreateProjectFormValues>({
+        resolver: zodResolver(createProjectFormSchema),
+        defaultValues: createProjectDefaultFormValues,
+    });
+
+    const onSubmit = async (data: CreateProjectFormValues) => {
         setError(null);
 
         try {
@@ -46,7 +58,7 @@ const CreateProject = () => {
                     'Content-Type': 'application/json',
                     Authorization: 'Bearer ' + (await getToken()),
                 },
-                body: JSON.stringify(form),
+                body: JSON.stringify(data),
             });
 
             if (!res.ok) {
@@ -69,30 +81,45 @@ const CreateProject = () => {
             m={'auto'}
             width={'100%'}
         >
-            <Card as="form" onSubmit={handleSubmit} width="60%" p={8} borderRadius="lg" shadow="lg">
+            <Card
+                as="form"
+                onSubmit={handleSubmit(onSubmit)}
+                width="60%"
+                p={8}
+                borderRadius="lg"
+                shadow="lg"
+            >
                 <CardHeader>
                     <Heading as="h1">Create Project</Heading>
                 </CardHeader>
                 <CardBody>
                     <Stack gap={4}>
-                        <Input
-                            type="text"
-                            placeholder="Cool Project Name"
-                            value={form.name}
-                            onChange={(e) => setForm({ ...form, name: e.target.value })}
-                            p={2}
-                        />
-                        <Textarea
-                            placeholder="Project Description"
-                            value={form.description}
-                            onChange={(e) => setForm({ ...form, description: e.target.value })}
-                        />
+                        <FormControl isInvalid={!!errors.name}>
+                            <FormLabel>Project Name</FormLabel>
+                            <Input
+                                type="text"
+                                placeholder="Cool Project Name"
+                                {...register('name')}
+                                p={2}
+                            />
+                            <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
+                        </FormControl>
+                        <FormControl isInvalid={!!errors.description}>
+                            <FormLabel>Project Description</FormLabel>
+                            <Textarea
+                                placeholder="Project Description"
+                                {...register('description')}
+                            />
+                            <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
+                        </FormControl>
                         {error && <Box color="red.500">{error}</Box>}
                     </Stack>
                 </CardBody>
                 <CardFooter>
                     <ButtonGroup gap={4}>
-                        <Button type="submit">Create Project</Button>
+                        <Button type="submit" isLoading={isSubmitting}>
+                            Create Project
+                        </Button>
                         <Link href="/Dashboard">
                             <Button variant="outline">Go Back</Button>
                         </Link>

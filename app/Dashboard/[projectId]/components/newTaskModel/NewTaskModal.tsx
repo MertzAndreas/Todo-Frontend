@@ -15,12 +15,19 @@ import {
     Select,
     AvatarGroup,
     Avatar,
+    FormErrorMessage,
 } from '@chakra-ui/react';
 import useAuthContext from '@/providers/AuthProvider';
-import IconSelector from './IconPicker';
+import IconSelector from '../IconPicker';
 import { BASE_URL } from '@/utils/globals';
 import { ProjectMember } from '@/app/Dashboard/[projectId]/page';
-import { ProjectGroupBarProps } from '@/app/Dashboard/[projectId]/components/ProjectGroupBar';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+    newTaskFormSchema,
+    NewTaskFormValues,
+    newTaskFormSchemaDefaultValues,
+} from './newTaskFormSchema';
 
 type NewTaskModalProps = {
     isOpen: boolean;
@@ -30,14 +37,6 @@ type NewTaskModalProps = {
     projectMembers: ProjectMember[];
 };
 
-type CreateTask = {
-    title: string;
-    description: string;
-    dueDate: string;
-    taskListId: string;
-    iconId: string;
-    assignedUsersIds: string[];
-};
 const NewTaskModal = ({
     isOpen,
     onClose,
@@ -46,138 +45,110 @@ const NewTaskModal = ({
     projectMembers,
 }: NewTaskModalProps) => {
     const { getToken } = useAuthContext();
-    const [newTask, setNewTask] = useState<CreateTask>({
-        title: '',
-        description: '',
-        dueDate: '',
-        taskListId: taskListId?.toString() ?? '',
-        iconId: '',
-        assignedUsersIds: [],
+    const {
+        handleSubmit,
+        register,
+        formState: { errors, isSubmitting },
+        reset,
+        setValue,
+    } = useForm<NewTaskFormValues>({
+        resolver: zodResolver(newTaskFormSchema),
+        defaultValues: {
+            ...newTaskFormSchemaDefaultValues,
+            taskListId: taskListId?.toString() ?? '',
+        },
     });
+
+    const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
     useEffect(() => {
         if (isOpen) {
-            setNewTask({
-                title: '',
-                description: '',
-                dueDate: '',
-                taskListId: taskListId?.toString() ?? '',
-                iconId: '',
-                assignedUsersIds: [],
-            });
+            reset({ ...newTaskFormSchemaDefaultValues, taskListId: taskListId?.toString() ?? '' });
         }
-    }, [isOpen, taskListId]);
+    }, [isOpen, taskListId, reset]);
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
-    ) => {
-        const { name, value } = e.target;
-        setNewTask({ ...newTask, [name]: value });
-    };
+    useEffect(() => {
+        setValue('assignedUsersIds', selectedMembers);
+    }, [selectedMembers, setValue]);
 
-    const handleIconSelect = (iconId: string) => {
-        setNewTask({ ...newTask, iconId: iconId });
-    };
-
-    const setSelectedMembers = (membersId: string[] | ((prevMembers: string[]) => string[])) => {
-        setNewTask((prev) => ({
-            ...prev,
-            assignedUsersIds:
-                typeof membersId === 'function' ? membersId(prev.assignedUsersIds) : membersId,
-        }));
-    };
-
-    const handleSubmit = async () => {
-        const data = {
-            ...newTask,
-            taskListId: +newTask.taskListId,
-            iconId: +newTask.iconId,
-            dueDate: new Date(newTask.dueDate).toISOString(),
+    const onSubmit = async (data: NewTaskFormValues) => {
+        const taskData = {
+            ...data,
+            taskListId: +data.taskListId,
+            iconId: +data.iconId,
+            dueDate: new Date(data.dueDate).toISOString(),
         };
 
-        console.log(data);
-
-        fetch(`${BASE_URL}/api/Task`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + (await getToken()),
-            },
-            body: JSON.stringify(data),
-        });
-
-        console.log(data);
-        setNewTask({
-            title: '',
-            description: '',
-            dueDate: '',
-            taskListId: '',
-            iconId: '',
-            assignedUsersIds: [],
-        });
-        onClose();
+        try {
+            await fetch(`${BASE_URL}/api/Task`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + (await getToken()),
+                },
+                body: JSON.stringify(taskData),
+            });
+            onClose();
+        } catch (e) {
+            console.error('Failed to create task', e);
+        }
     };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size={'3xl'}>
             <ModalOverlay>
-                <ModalContent>
+                <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
                     <ModalHeader>Add New Task</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <FormControl>
+                        <FormControl isInvalid={!!errors.title}>
                             <FormLabel>Title</FormLabel>
-                            <Input name="title" value={newTask.title} onChange={handleChange} />
+                            <Input {...register('title')} />
+                            <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
                         </FormControl>
-                        <FormControl mt={4}>
+                        <FormControl mt={4} isInvalid={!!errors.description}>
                             <FormLabel>Description</FormLabel>
-                            <Textarea
-                                name="description"
-                                value={newTask.description}
-                                onChange={handleChange}
-                                maxHeight={6}
-                            />
+                            <Textarea {...register('description')} maxHeight={6} />
+                            <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
                         </FormControl>
-                        <FormControl mt={4}>
+                        <FormControl mt={4} isInvalid={!!errors.dueDate}>
                             <FormLabel>Due Date</FormLabel>
                             <Input
                                 type="datetime-local"
-                                name="dueDate"
                                 min={new Date().toISOString().slice(0, -8)}
-                                value={newTask.dueDate}
-                                onChange={handleChange}
+                                {...register('dueDate')}
                             />
+                            <FormErrorMessage>{errors.dueDate?.message}</FormErrorMessage>
                         </FormControl>
-                        <FormControl mt={4}>
+                        <FormControl mt={4} isInvalid={!!errors.taskListId}>
                             <FormLabel>Task List</FormLabel>
-                            <Select
-                                name="taskListId"
-                                value={newTask.taskListId}
-                                onChange={handleChange}
-                            >
+                            <Select {...register('taskListId')}>
                                 {taskListOptions.map((option) => (
                                     <option key={option.value} value={option.value}>
                                         {option.label}
                                     </option>
                                 ))}
                             </Select>
+                            <FormErrorMessage>{errors.taskListId?.message}</FormErrorMessage>
                         </FormControl>
-                        <FormControl mt={4}>
+                        <FormControl mt={4} isInvalid={!!errors.iconId}>
                             <FormLabel>Task Icon</FormLabel>
-                            <IconSelector onSelect={handleIconSelect} />
+                            <IconSelector setValue={setValue} />
+                            <FormErrorMessage>{errors.iconId?.message}</FormErrorMessage>
                         </FormControl>
-                        <FormControl mt={4}>
+                        <FormControl mt={4} isInvalid={!!errors.assignedUsersIds}>
                             <FormLabel>Assigned Users</FormLabel>
                             <SelectableAvatars
                                 projectMembers={projectMembers}
+                                selectedMembers={selectedMembers}
                                 setSelectedMembers={setSelectedMembers}
-                                selectedMembers={newTask.assignedUsersIds}
                             />
+                            <FormErrorMessage>{errors.assignedUsersIds?.message}</FormErrorMessage>
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
+                        <Button colorScheme="blue" mr={3} type="submit" isLoading={isSubmitting}>
                             Add Task
                         </Button>
                         <Button variant="ghost" onClick={onClose}>

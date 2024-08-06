@@ -20,13 +20,16 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@hookform/resolvers": "^3.9.0",
     "@microsoft/signalr": "^8.0.0",
     "@tanstack/react-query": "^5.50.1",
     "framer-motion": "^11.2.13",
     "lodash": "^4.17.21",
     "next": "14.2.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-hook-form": "^7.52.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@chakra-ui/icons": "^2.1.1",
