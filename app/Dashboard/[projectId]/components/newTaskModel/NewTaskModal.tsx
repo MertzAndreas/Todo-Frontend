@@ -17,9 +17,7 @@ import {
     Avatar,
     FormErrorMessage,
 } from '@chakra-ui/react';
-import useAuthContext from '@/providers/AuthProvider';
 import IconSelector from '../IconPicker';
-import { BASE_URL } from '@/utils/globals';
 import { ProjectMember } from '@/app/Dashboard/[projectId]/page';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,11 +26,13 @@ import {
     NewTaskFormValues,
     newTaskFormSchemaDefaultValues,
 } from './newTaskFormSchema';
+import useHubConnection from '@/hooks/signalR/useSignalR';
 
 type NewTaskModalProps = {
     isOpen: boolean;
     onClose: () => void;
     taskListId: number | null;
+    projectId: number;
     taskListOptions: { label: string; value: number }[];
     projectMembers: ProjectMember[];
 };
@@ -42,9 +42,10 @@ const NewTaskModal = ({
     onClose,
     taskListId,
     taskListOptions,
+    projectId,
     projectMembers,
 }: NewTaskModalProps) => {
-    const { getToken } = useAuthContext();
+    const { sendMessage } = useHubConnection('/kanban');
     const {
         handleSubmit,
         register,
@@ -56,6 +57,7 @@ const NewTaskModal = ({
         defaultValues: {
             ...newTaskFormSchemaDefaultValues,
             taskListId: taskListId?.toString() ?? '',
+            projectId: projectId,
         },
     });
 
@@ -63,7 +65,11 @@ const NewTaskModal = ({
 
     useEffect(() => {
         if (isOpen) {
-            reset({ ...newTaskFormSchemaDefaultValues, taskListId: taskListId?.toString() ?? '' });
+            reset({
+                ...newTaskFormSchemaDefaultValues,
+                taskListId: taskListId?.toString() ?? '',
+                projectId: projectId,
+            });
         }
     }, [isOpen, taskListId, reset]);
 
@@ -74,25 +80,14 @@ const NewTaskModal = ({
     const onSubmit = async (data: NewTaskFormValues) => {
         const taskData = {
             ...data,
+            projectId: projectId,
             taskListId: +data.taskListId,
             iconId: +data.iconId,
             dueDate: new Date(data.dueDate).toISOString(),
         };
 
-        try {
-            await fetch(`${BASE_URL}/api/Task`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + (await getToken()),
-                },
-                body: JSON.stringify(taskData),
-            });
-            onClose();
-        } catch (e) {
-            console.error('Failed to create task', e);
-        }
+        await sendMessage('CreateNewTask', [taskData, projectId]);
+        onClose();
     };
 
     return (

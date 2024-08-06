@@ -68,12 +68,39 @@ const Page = ({ params: { projectId } }: PageProps) => {
             TransferTodo: (todoId: number, taskListId: number) => {
                 handleTransferTodo(todoId, taskListId, setProject);
             },
+            NewTask: handleNewTask,
         },
     });
 
     useEffect(() => {
         sendMessage('GetProjectOverview', [projectId]);
     }, [sendMessage, projectId]);
+
+    function handleNewTask(task: Todo, taskListId: number) {
+        setProject((prevProject) => {
+            if (!prevProject) {
+                console.error('Project is null');
+                return null;
+            }
+
+            const updatedTaskLists = prevProject.taskLists.map((list) => {
+                if (list.taskListId === taskListId) {
+                    return {
+                        ...list,
+                        tasks: [...list.tasks, task],
+                    };
+                }
+                return list;
+            });
+
+            const newProject = {
+                ...prevProject,
+                taskLists: updatedTaskLists,
+            };
+
+            return newProject;
+        });
+    }
 
     function handleGetProjectOverview(project: Project) {
         usersRef.current = project.projectMembers;
@@ -196,6 +223,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
             </Flex>
             <NewTaskModal
                 isOpen={isOpen}
+                projectId={project.projectId}
                 onClose={onClose}
                 taskListId={selectedTaskListId}
                 taskListOptions={taskListOptions}
