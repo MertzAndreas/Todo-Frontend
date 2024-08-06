@@ -14,6 +14,4 @@ export async function logoutRequest(token: string) {
         const error = await res.json();
         throw new Error(error.message || 'Logout failed');
     }
-
-    return await res.json();
 }

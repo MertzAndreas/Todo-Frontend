@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { notFound } from 'next/navigation';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { Card, Flex, Heading, IconButton, useDisclosure } from '@chakra-ui/react';
-import NewTaskModal from '@/app/Dashboard/[projectId]/components/NewTaskModal';
+import NewTaskModal from '@/app/Dashboard/[projectId]/components/newTaskModel/NewTaskModal';
 import ProtectedRoutes from '@/components/ProtectedRoutes';
 import AddTaskList from './components/AddTaskList';
 import useHubConnection from '@/hooks/signalR/useSignalR';
