@@ -66,6 +66,13 @@ const theme = extendTheme(
                 },
             },
         },
+        styles: {
+            global: (props) => ({
+                body: {
+                    bg: props.colorMode === 'dark' ? 'gray.900' : 'gray.50',
+                },
+            }),
+        },
     },
     withDefaultColorScheme({ colorScheme: 'facebook' }),
 );

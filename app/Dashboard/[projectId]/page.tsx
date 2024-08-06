@@ -66,7 +66,6 @@ const Page = ({ params: { projectId } }: PageProps) => {
             AddNewUser: handleNewUser,
             RemoveUser: handleRemoveUser,
             TransferTodo: (todoId: number, taskListId: number) => {
-                // Pass setProject to handleTransferTodo
                 handleTransferTodo(todoId, taskListId, setProject);
             },
         },
@@ -88,6 +87,13 @@ const Page = ({ params: { projectId } }: PageProps) => {
         setProject((prevProject) => ({
             ...prevProject,
             projectMembers: prevProject.projectMembers.filter((member) => member.id !== user.id),
+            taskLists: prevProject.taskLists.map((taskList) => ({
+                ...taskList,
+                tasks: taskList.tasks.map((task) => ({
+                    ...task,
+                    assigneeIds: task.assigneeIds.filter((id) => id !== user.id),
+                })),
+            })),
         }));
     }
 

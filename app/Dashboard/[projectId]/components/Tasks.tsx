@@ -11,15 +11,19 @@ type TaskProps = {
     getUserById: (id: string) => ProjectMember;
 };
 
-const renderAssignees = (assignees: ProjectMember[]) => {
+type AssigneesProps = {
+    assignees: ProjectMember[];
+};
+
+const Assignees: React.FC<AssigneesProps> = ({ assignees }) => {
     if (assignees.length === 0) return <></>;
-    if (assignees.length === 1) return <Avatar size={'sm'} name={assignees[0].name} />;
+    if (assignees.length === 1) return <Avatar size={'sm'} name={assignees[0]?.name || ''} />;
 
     return (
         <AvatarGroup>
-            {assignees.map((assignee, index) => {
-                return <Avatar size={'sm'} key={index} name={assignee.name} />;
-            })}
+            {assignees.map((assignee, index) => (
+                <Avatar size={'sm'} key={index} name={assignee.name} />
+            ))}
         </AvatarGroup>
     );
 };
@@ -47,7 +51,7 @@ export const Task: React.FC<TaskProps> = ({ task, onDragStart, onDragStop, getUs
                     <Text fontWeight={'200'}>{formatDateOrCountdown(dueDate)}</Text>
                 </Box>
                 <Flex flexDirection="row" justifyContent="space-between" mt={1}>
-                    {renderAssignees(assignees)}
+                    <Assignees assignees={assignees} />
                     <Text>{getIconById(svg, { width: '2rem', height: '2rem' })}</Text>
                 </Flex>
             </CardBody>
