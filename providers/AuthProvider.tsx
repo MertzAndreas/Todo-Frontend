@@ -7,12 +7,12 @@ import {
     setTokenInStorage,
 } from '@/utils/token';
 import { useRouter } from 'next/navigation';
-import { LoginFormValues } from '@/app/Account/Login/page';
 import { loginRequest } from '@/api/auth/LoginRequest';
 import { registerRequest } from '@/api/auth/RegisterRequest';
 import { fetchNewToken } from '@/api/auth/FetchNewToken';
-import { logoutRequest } from '@/api/auth/logoutRequest';
+import { LogoutRequest } from '@/api/auth/LogoutRequest';
 import { RegisterFormValues } from '@/app/Account/Register/registerFormSchema';
+import { LoginFormValues } from '@/app/Account/Login/loginFormSchema';
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     const router = useRouter();
@@ -37,25 +37,37 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     }, []);
 
     async function login(form: LoginFormValues) {
-        const data = await loginRequest(form);
-        setTokenInStorage(data.accessToken);
-        setIsAuthenticated(true);
-        router.push('/Dashboard');
+        try {
+            const data = await loginRequest(form);
+            setTokenInStorage(data.accessToken);
+            setIsAuthenticated(true);
+            router.push('/Dashboard');
+        } catch (e) {
+            throw new Error(e.message);
+        }
     }
 
     async function register(form: RegisterFormValues) {
-        const data = await registerRequest(form);
-        setTokenInStorage(data.accessToken);
-        setIsAuthenticated(true);
-        router.push('/Dashboard');
+        try {
+            const data = await registerRequest(form);
+            setTokenInStorage(data.accessToken);
+            setIsAuthenticated(true);
+            router.push('/Dashboard');
+        } catch (e) {
+            throw new Error(e.message);
+        }
     }
 
-    async function logOut() {
-        setIsAuthenticated(false);
-        const token = await getToken();
-        removeTokenFromStorage();
-        await logoutRequest(token);
-        router.push('/Account/Login');
+    async function logOut(): Promise<void> {
+        try {
+            setIsAuthenticated(false);
+            const token = await getToken();
+            await LogoutRequest(token);
+            removeTokenFromStorage();
+            router.push('/Account/Login');
+        } catch (e) {
+            throw new Error(e.message);
+        }
     }
 
     const getToken = useCallback(async () => {
@@ -121,8 +133,8 @@ interface AuthContextType {
     isAuthenticated: boolean | null;
     getToken: () => Promise<string>;
     login: (form: LoginFormValues) => Promise<void>;
-    logOut: () => void;
-    register: (form: RegisterForm) => Promise<void>;
+    logOut: () => Promise<void>;
+    register: (form: RegisterFormValues) => Promise<void>;
     redirectToDashboardIfAuthenticated: () => void;
 }
 

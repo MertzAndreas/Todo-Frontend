@@ -15,6 +15,7 @@ import {
     Heading,
     Input,
     Stack,
+    useToast,
 } from '@chakra-ui/react';
 import useAuthContext from '@/providers/AuthProvider';
 import { useForm } from 'react-hook-form';
@@ -25,8 +26,22 @@ import {
     LoginFormValues,
 } from '@/app/Account/Login/loginFormSchema';
 
+const toastOptions = {
+    success: {
+        title: 'Login Successful',
+    },
+    error: (error: Error) => ({
+        title: 'Login Failed',
+        description: error.message || 'An error occurred during login. Please try again.',
+    }),
+    loading: {
+        title: 'Loading...',
+    },
+};
+
 const Login = () => {
     const { isAuthenticated, login, redirectToDashboardIfAuthenticated } = useAuthContext();
+    const toast = useToast();
     const {
         handleSubmit,
         register,
@@ -40,6 +55,11 @@ const Login = () => {
         redirectToDashboardIfAuthenticated();
     }, [isAuthenticated, redirectToDashboardIfAuthenticated]);
 
+    const onSubmit = async (form: LoginFormValues) => {
+        const registerPromise = login(form);
+        toast.promise(registerPromise, toastOptions);
+    };
+
     return (
         <Flex
             flexDirection="column"
@@ -50,7 +70,7 @@ const Login = () => {
         >
             <Card
                 as="form"
-                onSubmit={handleSubmit(login)}
+                onSubmit={handleSubmit(onSubmit)}
                 width="60%"
                 align={'center'}
                 p={4}
@@ -70,6 +90,7 @@ const Login = () => {
                                 p={2}
                                 border="1px"
                                 borderRadius="md"
+                                autoComplete={'email'}
                             />
                             <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
                         </FormControl>
@@ -83,6 +104,7 @@ const Login = () => {
                                 p={2}
                                 border="1px"
                                 borderRadius="md"
+                                autoComplete={'current-password'}
                             />
                             <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
                         </FormControl>

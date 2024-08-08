@@ -16,6 +16,7 @@ import {
     Heading,
     Input,
     Stack,
+    useToast,
 } from '@chakra-ui/react';
 import useAuthContext from '@/providers/AuthProvider';
 import { useForm } from 'react-hook-form';
@@ -26,8 +27,24 @@ import {
     RegisterFormValues,
 } from '@/app/Account/Register/registerFormSchema';
 
+const toastOptions = {
+    success: {
+        title: 'Registration Successful',
+        description: 'Your account has been created successfully.',
+    },
+    error: (error: Error) => ({
+        title: 'Registration Failed',
+        description: error.message || 'An error occurred during registration. Please try again.',
+    }),
+    loading: {
+        title: 'Registering...',
+        description: 'Please wait while we create your account.',
+    },
+};
+
 const Register = () => {
     const { isAuthenticated, register, redirectToDashboardIfAuthenticated } = useAuthContext();
+    const toast = useToast();
     const {
         handleSubmit,
         register: formRegister,
@@ -41,12 +58,17 @@ const Register = () => {
         redirectToDashboardIfAuthenticated();
     }, [isAuthenticated, redirectToDashboardIfAuthenticated]);
 
+    const onSubmit = async (form: RegisterFormValues) => {
+        const registerPromise = register(form);
+        toast.promise(registerPromise, toastOptions);
+    };
+
     return (
         <Flex flexDirection="column" alignItems="center" m={'auto'} width={'100%'}>
             <Card
                 align={'center'}
                 as="form"
-                onSubmit={handleSubmit(register)}
+                onSubmit={handleSubmit(onSubmit)}
                 width="60%"
                 p={8}
                 borderRadius="lg"
@@ -68,6 +90,7 @@ const Register = () => {
                                 p={2}
                                 border="1px"
                                 borderRadius="md"
+                                autoComplete={'username'}
                             />
                             <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
                         </FormControl>
@@ -79,6 +102,7 @@ const Register = () => {
                                 p={2}
                                 border="1px"
                                 borderRadius="md"
+                                autoComplete={'email'}
                             />
                             <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
                         </FormControl>
@@ -91,6 +115,7 @@ const Register = () => {
                                 p={2}
                                 border="1px"
                                 borderRadius="md"
+                                autoComplete={'new-password'}
                             />
                             <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
                         </FormControl>
@@ -103,6 +128,7 @@ const Register = () => {
                                 p={2}
                                 border="1px"
                                 borderRadius="md"
+                                autoComplete={'new-password'}
                             />
                             <FormErrorMessage>{errors.confirmPassword?.message}</FormErrorMessage>
                         </FormControl>

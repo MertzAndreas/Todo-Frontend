@@ -15,6 +15,7 @@ import {
     Stack,
     Divider,
     useColorMode,
+    useToast,
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon, SettingsIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
@@ -23,9 +24,22 @@ import { getUserNameFromToken } from '@/utils/token';
 import React, { useEffect, useState } from 'react';
 
 const Links = [{ name: 'Dashboard', link: '/Dashboard' }];
+const toastOptions = {
+    success: {
+        title: 'Logout Successful',
+    },
+    error: (error: Error) => ({
+        title: 'Logout Failed',
+        description: error.message || 'An error occurred during logout',
+    }),
+    loading: {
+        title: 'Loading...',
+    },
+};
 
 export default function Navbar() {
     const [username, setUsername] = useState('');
+    const toast = useToast();
     const { toggleColorMode, colorMode } = useColorMode();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { logOut, isAuthenticated } = useAuthContext();
@@ -37,6 +51,11 @@ export default function Navbar() {
             setUsername('');
         }
     }, [isAuthenticated]);
+
+    const onLogout = async () => {
+        const logoutPromise = logOut();
+        toast.promise(logoutPromise, toastOptions);
+    };
 
     return (
         <>
@@ -77,7 +96,7 @@ export default function Navbar() {
                             </MenuButton>
                             <MenuList>
                                 <MenuItem>Account</MenuItem>
-                                <MenuItem onClick={logOut}>Log-out</MenuItem>
+                                <MenuItem onClick={onLogout}>Log-out</MenuItem>
                                 <Divider />
                                 <MenuItem onClick={toggleColorMode}>Theme {colorMode}</MenuItem>
                             </MenuList>

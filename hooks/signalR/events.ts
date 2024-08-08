@@ -1,11 +1,11 @@
-import { MutableRefObject } from 'react';
-import { HubConnection } from '@microsoft/signalr';
+import { HubConnection, HubConnectionState } from '@microsoft/signalr';
 import { getSubscribers, isEventRegistered, Subscriber } from '@/hooks/signalR/subscribers';
 import { HubUrls } from '@/utils/globals';
-import { HubConnections } from '@/hooks/signalR/initializeConnection';
+import { CustomHub, HubConnections } from '@/hooks/signalR/initializeConnection';
+import { MutableRefObject } from 'react';
 
 export function bindEvents(sub: Subscriber) {
-    const connection = HubConnections[sub.url];
+    const con = HubConnections[sub.url];
     if (sub.options.current?.onEvents) {
         Object.entries(sub.options.current.onEvents).forEach(([eventName, eventHandler]) => {
             if (isEventRegistered(sub.url, eventName)) {
@@ -14,18 +14,19 @@ export function bindEvents(sub: Subscriber) {
                 );
             }
 
-            connection.on(eventName, eventHandler);
+            con.connection.on(eventName, eventHandler);
         });
     }
+
+    con.connection.onclose(() => sub.setConnectionStatus(HubConnectionState.Disconnected));
+    con.connection.onreconnecting(() => sub.setConnectionStatus(HubConnectionState.Reconnecting));
+    con.connection.onreconnected(() => sub.setConnectionStatus(HubConnectionState.Connected));
 }
 
-export function unbindEvents(
-    hubConnection: MutableRefObject<HubConnection>,
-    subscriber: Subscriber,
-) {
+export function unbindEvents(hubConnection: MutableRefObject<CustomHub>, subscriber: Subscriber) {
     if (subscriber.options.current?.onEvents) {
         Object.entries(subscriber.options.current.onEvents).forEach(([eventName, eventHandler]) => {
-            hubConnection.current.off(eventName, eventHandler);
+            hubConnection.current.connection.off(eventName, eventHandler);
         });
     }
 }

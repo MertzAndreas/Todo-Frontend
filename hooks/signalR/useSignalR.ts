@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HubConnection, HubConnectionState } from '@microsoft/signalr';
-import { initializeConnection } from '@/hooks/signalR/initializeConnection';
+import { CustomHub, initializeConnection } from '@/hooks/signalR/initializeConnection';
 import { HubUrls } from '@/utils/globals';
 import useAuthContext from '@/providers/AuthProvider';
+import { ToastId, useToast, UseToastOptions } from '@chakra-ui/react';
+import { TrashBinIcon } from '@/utils/icons';
+import { connectionToast } from '@/hooks/signalR/connectionToast';
 
 type MessageType = 'send' | 'invoke';
 
@@ -33,13 +36,15 @@ const useHubConnection = (hubUrl: HubUrls, options: HubConnectionOptions = DEFAU
     const [connectionStatus, setConnectionStatus] = useState<HubConnectionState>(
         HubConnectionState.Disconnected,
     );
-    const hubConnection = useRef<HubConnection | null>(null);
+    const toast = useToast();
+    const hubConnection = useRef<CustomHub | null>(null);
     const messageQueue = useRef<Message[]>([]);
     const optionsCache = useRef<HubConnectionOptions>(options);
+    const toastId = useRef<ToastId>(null);
     optionsCache.current = options;
 
     const handleMessage = useCallback(async (message: Message) => {
-        if (hubConnection.current?.state !== HubConnectionState.Connected) {
+        if (hubConnection.current?.connection.state !== HubConnectionState.Connected) {
             messageQueue.current.push(message);
             return;
         }
@@ -49,13 +54,16 @@ const useHubConnection = (hubUrl: HubUrls, options: HubConnectionOptions = DEFAU
             let result;
             switch (message.type) {
                 case 'invoke':
-                    result = await hubConnection.current.invoke(message.hubMethod, ...args);
+                    result = await hubConnection.current.connection.invoke(
+                        message.hubMethod,
+                        ...args,
+                    );
                     if (message.resolve) {
                         message.resolve(result);
                     }
                     break;
                 case 'send':
-                    await hubConnection.current.send(message.hubMethod, ...args);
+                    await hubConnection.current.connection.send(message.hubMethod, ...args);
                     if (message.resolve) {
                         message.resolve();
                     }
@@ -93,13 +101,14 @@ const useHubConnection = (hubUrl: HubUrls, options: HubConnectionOptions = DEFAU
     );
 
     useEffect(() => {
-        if (hubUrl !== null && hubUrl.length !== 0 && isAuthenticated) {
+        if (hubUrl !== null && hubUrl.length !== 0) {
             const cleanUp = initializeConnection(
                 hubUrl,
                 getToken,
                 hubConnection,
                 setConnectionStatus,
                 optionsCache,
+                toastId,
             );
             return () => {
                 cleanUp?.();
@@ -116,6 +125,10 @@ const useHubConnection = (hubUrl: HubUrls, options: HubConnectionOptions = DEFAU
             messageQueue.current = [];
         }
     }, [connectionStatus, handleMessage]);
+
+    useEffect(() => {
+        connectionToast(connectionStatus, toast, hubUrl);
+    }, [toast, connectionStatus, hubUrl]);
 
     return { connectionStatus, sendMessage, invokeMethod };
 };
