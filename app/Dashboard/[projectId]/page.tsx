@@ -73,7 +73,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
     });
 
     useEffect(() => {
-        sendMessage('GetProjectOverview', [projectId]);
+        void sendMessage('GetProjectOverview', [projectId]);
     }, [sendMessage, projectId]);
 
     function handleNewTask(task: Todo, taskListId: number) {
@@ -93,12 +93,10 @@ const Page = ({ params: { projectId } }: PageProps) => {
                 return list;
             });
 
-            const newProject = {
+            return {
                 ...prevProject,
                 taskLists: updatedTaskLists,
             };
-
-            return newProject;
         });
     }
 

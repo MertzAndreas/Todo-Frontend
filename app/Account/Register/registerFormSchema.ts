@@ -16,6 +16,9 @@ export const registerFormSchema = z
             })
             .refine((value) => /[0-9]/.test(value), {
                 message: 'Password must contain at least one number',
+            })
+            .refine((value) => /[^a-zA-Z0-9]/.test(value), {
+                message: 'Must contain at least one non alphanumeric character',
             }),
         confirmPassword: z.string().min(8, { message: 'Confirm Password is required' }),
     })

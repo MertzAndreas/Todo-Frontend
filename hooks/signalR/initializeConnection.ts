@@ -8,21 +8,27 @@ import {
     addSubscriber,
     hasSubscribers,
     removeSubscriber,
-    setSubscribersStatusToConnected,
     Subscriber,
 } from '@/hooks/signalR/subscribers';
+import { ToastId } from '@chakra-ui/react';
+
+export type CustomHub = {
+    connection?: HubConnection;
+    toastId: MutableRefObject<ToastId>;
+};
 
 type HubConnectionProps = {
-    [url in HubUrls]?: HubConnection;
+    [url in HubUrls]?: CustomHub;
 };
 export const HubConnections: HubConnectionProps = {};
 
 export const initializeConnection = (
     url: HubUrls,
     token: () => Promise<string>,
-    hubConnection: MutableRefObject<HubConnection>,
+    hubConnection: MutableRefObject<CustomHub>,
     setConnectionStatus: Dispatch<SetStateAction<HubConnectionState>>,
     optionsCache: MutableRefObject<HubConnectionOptions>,
+    toastId: MutableRefObject<ToastId>,
 ) => {
     const subscriber: Subscriber = {
         url,
@@ -31,7 +37,14 @@ export const initializeConnection = (
     };
 
     if (!HubConnections[url]) {
-        createNewConnection(url, token, hubConnection, setConnectionStatus, subscriber);
+        void createNewConnection(
+            url,
+            token,
+            hubConnection,
+            setConnectionStatus,
+            subscriber,
+            toastId,
+        );
     } else {
         reuseConnection(hubConnection, url, setConnectionStatus, subscriber);
     }
@@ -39,44 +52,62 @@ export const initializeConnection = (
     return cleanUpConnection(url, hubConnection, subscriber);
 };
 
-function createNewConnection(
+const createNewConnection = async (
     url: HubUrls,
     token: () => Promise<string>,
-    hubConnection: MutableRefObject<HubConnection>,
+    hubConnection: MutableRefObject<CustomHub>,
     setConnectionStatus: Dispatch<SetStateAction<HubConnectionState>>,
     subscriber: Subscriber,
-) {
-    HubConnections[url] = createHubConnection(url, token);
+    toastId: MutableRefObject<ToastId>,
+) => {
+    if (!HubConnections[url]) {
+        HubConnections[url] = { toastId: toastId };
+    }
+
+    HubConnections[url].connection = createHubConnection(url, token);
     hubConnection.current = HubConnections[url];
-    setConnectionStatus(HubConnectionState.Connecting);
-    bindReconnect(hubConnection.current, url);
+    bindReconnect(hubConnection.current.connection, url);
     bindEvents(subscriber);
     addSubscriber(url, subscriber);
-    hubConnection.current
-        .start()
-        .then(() => {
-            console.assert(hubConnection.current.state === HubConnectionState.Connected);
-            setSubscribersStatusToConnected(url);
-        })
-        .catch(console.error);
-}
+    setConnectionStatus(HubConnectionState.Connecting);
 
-function reuseConnection(
-    hubConnection: MutableRefObject<HubConnection>,
+    let timeOut = 1000;
+    const maxTimeout = 10000;
+
+    const start = async () => {
+        try {
+            await hubConnection.current.connection.start();
+            setConnectionStatus(HubConnectionState.Connected);
+            console.assert(hubConnection.current.connection.state === HubConnectionState.Connected);
+            timeOut = 1000;
+        } catch (err) {
+            console.log(`Connection failed: ${err.message}`);
+            setTimeout(() => {
+                if (timeOut > maxTimeout) setConnectionStatus(HubConnectionState.Disconnected);
+                start();
+            }, timeOut);
+            timeOut = Math.min(2 * timeOut, maxTimeout);
+        }
+    };
+
+    await start();
+};
+
+const reuseConnection = (
+    hubConnection: MutableRefObject<CustomHub>,
     url: HubUrls,
     setConnectionStatus: Dispatch<SetStateAction<HubConnectionState>>,
     subscriber: Subscriber,
-) {
+) => {
     hubConnection.current = HubConnections[url];
-    console.assert(hubConnection.current.state === HubConnections[url].state);
-    setConnectionStatus(HubConnections[url].state);
+    setConnectionStatus(HubConnections[url].connection.state);
     bindEvents(subscriber);
     addSubscriber(url, subscriber);
-}
+};
 
 const cleanUpConnection = (
     url: HubUrls,
-    hubConnection: MutableRefObject<HubConnection>,
+    hubConnection: MutableRefObject<CustomHub>,
     subscriber: Subscriber,
 ) => {
     return () => {
@@ -86,7 +117,7 @@ const cleanUpConnection = (
         //Delay is needed as it ensures that asynchronous operations and state updates occur in the correct order
         setTimeout(() => {
             if (hasSubscribers(url)) return;
-            hubConnection.current
+            hubConnection.current.connection
                 ?.stop()
                 .catch(console.error)
                 .finally(() => {

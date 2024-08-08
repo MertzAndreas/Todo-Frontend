@@ -20,6 +20,7 @@ import {
     FormControl,
     FormLabel,
     FormErrorMessage,
+    useToast,
 } from '@chakra-ui/react';
 import useAuthContext from '@/providers/AuthProvider';
 import ProtectedRoute from '@/components/ProtectedRoutes';
@@ -31,12 +32,25 @@ import {
     CreateProjectFormValues,
     createProjectDefaultFormValues,
 } from '@/app/Dashboard/Create/createProjectFormSchema';
+import createProjectRequest from '@/api/createProject';
 
+const toastOptions = {
+    success: {
+        title: 'Project was created successfully',
+    },
+    error: (error: Error) => ({
+        title: 'Error during project creation',
+        description: error.message || 'An unexpected error occurred during project creation.',
+    }),
+    loading: {
+        title: 'Loading...',
+    },
+};
 const CreateProject = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
     const { getToken } = useAuthContext();
-    const [error, setError] = useState<string | null>(null);
+    const toast = useToast();
 
     const {
         handleSubmit,
@@ -48,29 +62,11 @@ const CreateProject = () => {
     });
 
     const onSubmit = async (data: CreateProjectFormValues) => {
-        setError(null);
-
-        try {
-            const res = await fetch(`${BASE_URL}/api/Project`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer ' + (await getToken()),
-                },
-                body: JSON.stringify(data),
-            });
-
-            if (!res.ok) {
-                throw new Error('Failed to create project');
-            }
-
-            await queryClient.invalidateQueries({ queryKey: ['projects'] });
-            router.push('/Dashboard');
-        } catch (e) {
-            setError('Failed to create project. Please try again.');
-            console.error(e);
-        }
+        const resPromise = createProjectRequest(data, getToken);
+        toast.promise(resPromise, toastOptions);
+        await queryClient.invalidateQueries({ queryKey: ['projects'] });
+        const id = await resPromise;
+        router.push(`/Dashboard/${id}`);
     };
 
     return (
@@ -112,7 +108,6 @@ const CreateProject = () => {
                             />
                             <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
                         </FormControl>
-                        {error && <Box color="red.500">{error}</Box>}
                     </Stack>
                 </CardBody>
                 <CardFooter>

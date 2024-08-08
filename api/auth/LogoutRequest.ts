@@ -1,6 +1,6 @@
 import { BASE_URL } from '@/utils/globals';
 
-export async function logoutRequest(token: string) {
+export async function LogoutRequest(token: string) {
     const res = await fetch(`${BASE_URL}/Account/logout`, {
         method: 'POST',
         credentials: 'include',
@@ -11,7 +11,7 @@ export async function logoutRequest(token: string) {
     });
 
     if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Logout failed');
+        const error = await res.text();
+        throw new Error(error || 'Logout failed for unknown reason');
     }
 }
