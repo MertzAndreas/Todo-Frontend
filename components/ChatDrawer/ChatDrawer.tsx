@@ -3,6 +3,8 @@
 import {
     Box,
     Button,
+    Center,
+    Divider,
     Drawer,
     DrawerBody,
     DrawerCloseButton,
@@ -16,7 +18,7 @@ import {
     Textarea,
     useDisclosure,
 } from '@chakra-ui/react';
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { ChatIcon } from '@chakra-ui/icons';
 import useHubConnection from '@/hooks/signalR/useSignalR';
 import { HubConnectionState } from '@microsoft/signalr';
@@ -29,6 +31,7 @@ export type Message = {
     sentTime: string;
     senderName: string;
     projectId: string;
+    currentUserName?: string;
 };
 
 type Project = {
@@ -42,6 +45,8 @@ function ChatDrawer() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [selectedProject, setSelectedProject] = useState<string>('');
     const [newMessage, setNewMessage] = useState<string>('');
+    const initialFocus = useRef<HTMLTextAreaElement | null>(null);
+
     const { connectionStatus, invokeMethod } = useHubConnection('/chat', {
         onEvents: {
             ReceiveMessage: handleReceiveMessage,
@@ -97,10 +102,14 @@ function ChatDrawer() {
                 right={5}
                 bottom={5}
                 size={'lg'}
+            />
+            <Drawer
+                isOpen={isOpen}
+                placement="right"
+                size={'md'}
+                onClose={onClose}
+                initialFocusRef={initialFocus}
             >
-                Open
-            </IconButton>
-            <Drawer isOpen={isOpen} placement="right" size={'md'} onClose={onClose}>
                 <DrawerOverlay />
                 <DrawerContent>
                     <DrawerCloseButton />
@@ -109,6 +118,7 @@ function ChatDrawer() {
                         <Select
                             value={selectedProject}
                             variant="filled"
+                            size={'lg'}
                             mt={4}
                             onChange={(event) => {
                                 setSelectedProject(event.target.value);
@@ -132,15 +142,20 @@ function ChatDrawer() {
                         </Box>
                     </DrawerBody>
                     <DrawerFooter
-                        width={'100%'}
+                        width={'95%'}
                         flexDirection={'column'}
+                        justifyContent="center"
+                        alignItems="center"
+                        m={'auto'}
                         as={'form'}
                         onSubmit={handleSendMessage}
                     >
                         <FormControl mb={4}>
                             <Textarea
+                                ref={initialFocus}
                                 colorScheme={'facebook'}
                                 value={newMessage}
+                                variant={'filled'}
                                 onChange={(e) => {
                                     setNewMessage(e.target.value);
                                 }}

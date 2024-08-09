@@ -16,14 +16,18 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
 const variants = {
     secondary: definePartsStyle((props) => ({
         container: {
-            bg: props.colorMode === 'dark' ? 'gray.800' : 'gray.50',
-        },
-    })),
-    hovered: definePartsStyle((props) => ({
-        container: {
+            borderColor: props.colorMode === 'dark' ? 'gray.600' : 'gray.300',
             bg: props.colorMode === 'dark' ? 'gray.750' : 'gray.100',
         },
     })),
+    hovered: definePartsStyle((props) => {
+        return {
+            container: {
+                borderColor: props.colorMode === 'dark' ? 'gray.600' : 'gray.300',
+                bg: props.colorMode === 'dark' ? 'gray.800' : 'gray.200',
+            },
+        };
+    }),
 };
 
 export const Card = defineMultiStyleConfig({ variants });
