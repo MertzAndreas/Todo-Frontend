@@ -3,8 +3,6 @@
 import {
     Box,
     Button,
-    Center,
-    Divider,
     Drawer,
     DrawerBody,
     DrawerCloseButton,
@@ -12,18 +10,21 @@ import {
     DrawerFooter,
     DrawerHeader,
     DrawerOverlay,
+    Flex,
     FormControl,
+    FormLabel,
     IconButton,
     Select,
     Textarea,
     useDisclosure,
 } from '@chakra-ui/react';
-import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { ChatIcon } from '@chakra-ui/icons';
 import useHubConnection from '@/hooks/signalR/useSignalR';
 import { HubConnectionState } from '@microsoft/signalr';
 import MessageList from '@/components/ChatDrawer/MessageList';
 import ProtectedComponent from '@/components/ProtectedComponent';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
 export type Message = {
     senderId: string;
@@ -44,7 +45,6 @@ function ChatDrawer() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [projects, setProjects] = useState<Project[]>([]);
     const [selectedProject, setSelectedProject] = useState<string>('');
-    const [newMessage, setNewMessage] = useState<string>('');
     const initialFocus = useRef<HTMLTextAreaElement | null>(null);
 
     const { connectionStatus, invokeMethod } = useHubConnection('/chat', {
@@ -55,6 +55,15 @@ function ChatDrawer() {
         },
     });
 
+    const {
+        handleSubmit,
+        setValue,
+        register,
+        formState: { isSubmitting },
+    } = useForm({
+        defaultValues: { message: '' },
+    });
+
     useEffect(() => {
         if (connectionStatus === HubConnectionState.Connected) {
             invokeMethod('RetrieveProject').catch((err) => console.error(err));
@@ -63,46 +72,60 @@ function ChatDrawer() {
     }, [connectionStatus, invokeMethod]);
 
     function handleMessageHistory(messageHistory: Message[]) {
-        console.log('Message history received:', messageHistory);
         setMessages(messageHistory);
     }
 
     function handleReceiveMessage(message: Message) {
-        console.log('Message received:', message);
         setMessages((prevMessages) => [...prevMessages, message]);
     }
 
     function handleProjectList(projectList: Project[]) {
         setProjects(projectList);
         if (projectList.length > 0) {
-            console.log('Project list received:', projectList);
             setSelectedProject(projectList[0].projectId.toString());
         }
     }
 
-    const handleSendMessage = async (event: FormEvent) => {
-        event.preventDefault();
-        if (newMessage.trim()) {
-            const messageObj = {
-                content: newMessage,
-                projectId: selectedProject,
-            };
-            invokeMethod('PostMessage', [messageObj]).catch((err) => console.error(err));
-            setNewMessage('');
+    const handleSendMessage: SubmitHandler<{ message: string }> = async (data) => {
+        const { message } = data;
+        if (!message.trim()) return;
+
+        const messageObj = {
+            content: message,
+            projectId: selectedProject,
+        };
+        try {
+            setValue('message', '');
+            await invokeMethod('PostMessage', [messageObj]);
+        } catch (err) {
+            console.error(err);
         }
+    };
+
+    const handleEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit(handleSendMessage)();
+        }
+    };
+    const handleChangeSelectedProject = (e: ChangeEvent<HTMLSelectElement>) => {
+        const projectId = e.target.value;
+        setSelectedProject(projectId);
     };
 
     return (
         <>
-            <IconButton
-                aria-label="ChatIcon"
-                onClick={onOpen}
-                icon={<ChatIcon />}
-                position={'absolute'}
-                right={5}
-                bottom={5}
-                size={'lg'}
-            />
+            <Box>
+                <IconButton
+                    aria-label="ChatIcon"
+                    onClick={onOpen}
+                    icon={<ChatIcon />}
+                    position={'absolute'}
+                    right={5}
+                    bottom={5}
+                    size={'lg'}
+                />
+            </Box>
             <Drawer
                 isOpen={isOpen}
                 placement="right"
@@ -120,9 +143,7 @@ function ChatDrawer() {
                             variant="filled"
                             size={'lg'}
                             mt={4}
-                            onChange={(event) => {
-                                setSelectedProject(event.target.value);
-                            }}
+                            onChange={handleChangeSelectedProject}
                         >
                             {projects.map((proj) => (
                                 <option key={proj.projectId} value={proj.projectId}>
@@ -148,32 +169,26 @@ function ChatDrawer() {
                         alignItems="center"
                         m={'auto'}
                         as={'form'}
-                        onSubmit={handleSendMessage}
+                        onSubmit={handleSubmit(handleSendMessage)}
                     >
                         <FormControl mb={4}>
+                            <FormLabel>New Message</FormLabel>
                             <Textarea
                                 ref={initialFocus}
-                                colorScheme={'facebook'}
-                                value={newMessage}
                                 variant={'filled'}
-                                onChange={(e) => {
-                                    setNewMessage(e.target.value);
-                                }}
+                                {...register('message')}
                                 placeholder="Type your message here"
+                                onKeyDown={(e) => handleEnterPress(e)}
                             />
                         </FormControl>
-                        <Box display="flex" justifyContent="space-evenly" width={'100%'}>
-                            <Button
-                                type="submit"
-                                colorScheme={'facebook'}
-                                isDisabled={selectedProject === ''}
-                            >
+                        <Flex justifyContent="space-evenly" width={'100%'}>
+                            <Button type="submit" isLoading={isSubmitting}>
                                 Send
                             </Button>
-                            <Button colorScheme={'facebook'} variant={'outline'} onClick={onClose}>
+                            <Button variant={'outline'} onClick={onClose}>
                                 Close
                             </Button>
-                        </Box>
+                        </Flex>
                     </DrawerFooter>
                 </DrawerContent>
             </Drawer>

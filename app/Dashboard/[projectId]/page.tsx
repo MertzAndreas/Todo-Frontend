@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { notFound } from 'next/navigation';
 import { SettingsIcon } from '@chakra-ui/icons';
-import { Card, Flex, Heading, IconButton, useDisclosure } from '@chakra-ui/react';
+import { Card, Flex, Heading, HStack, IconButton, Stack, useDisclosure } from '@chakra-ui/react';
 import NewTaskModal from '@/app/Dashboard/[projectId]/components/newTaskModel/NewTaskModal';
 import ProtectedRoutes from '@/components/ProtectedRoutes';
 import AddTaskList from './components/AddTaskList';
@@ -179,7 +179,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
     if (!project) return null;
 
     return (
-        <Flex flexDir="column" flexGrow={1} m="2rem" height="100%">
+        <Flex flexDirection={'column'} height={'100%'} maxH={'100%'} m={4} overflow={'auto'}>
             <Card mb={4} p={4}>
                 <Flex justifyContent="space-between" alignItems="center">
                     <ProjectGroupBar
@@ -204,7 +204,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
                     />
                 </Flex>
             </Card>
-            <Flex gap="2rem" overflowX="scroll" flexGrow={1}>
+            <HStack flex={1} overflowY={'auto'} spacing={4}>
                 {project.taskLists.map((list) => (
                     <Tasklist
                         openModal={() => openModalWithTaskListId(list.taskListId)}
@@ -218,7 +218,7 @@ const Page = ({ params: { projectId } }: PageProps) => {
                     />
                 ))}
                 <AddTaskList projectId={parseInt(projectId)} />
-            </Flex>
+            </HStack>
             <NewTaskModal
                 isOpen={isOpen}
                 projectId={project.projectId}

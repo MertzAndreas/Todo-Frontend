@@ -6,6 +6,7 @@ import {
     EditablePreview,
     Flex,
     IconButton,
+    Stack,
     useColorMode,
     useDisclosure,
 } from '@chakra-ui/react';
@@ -76,7 +77,7 @@ const Tasklist: React.FC<TasklistProps> = ({
         const newTarget = e.relatedTarget as HTMLElement;
         if (recursiveParentWalk(newTarget, taskListId)) return;
         setDraggingOverId(null);
-    }, 50);
+    }, 20);
 
     const handleDrop = async (e: React.DragEvent<HTMLElement>) => {
         e.preventDefault();
@@ -150,7 +151,6 @@ const Tasklist: React.FC<TasklistProps> = ({
         onOpen();
     };
 
-    //Filter tasks such that only tasks which has at least one task.assignedIds which is equal to selectedMembers, if any are selected otherwise show all
     const filteredTasks =
         selectedMembers.length === 0
             ? sortedTasks
@@ -159,28 +159,26 @@ const Tasklist: React.FC<TasklistProps> = ({
               );
 
     return (
-        <Flex
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="start"
+        <Stack
             id={taskListId.toString()}
-            marginBottom="0.25rem"
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            height={'100%'}
         >
             <EditTaskListModal isOpen={isOpen} onClose={onClose} />
             <Card
-                minHeight={'100%'}
+                height={'100%'}
+                overflowY={'auto'}
                 variant={draggingOverId === taskListId ? 'hovered' : 'elevated'}
-                width={'20rem'}
+                width={'25rem'}
                 padding={'1.5rem'}
-                boxShadow="md"
+                boxShadow="xl"
                 borderRadius="md"
                 transition={'background-color 0.3s ease-in-out'}
             >
-                <Flex justifyContent="space-between" alignItems="center" marginBottom="1rem">
+                <Flex justifyContent="space-between" alignItems="center" pb="1rem">
                     <Editable
                         as={'h2'}
                         fontSize="2xl"
@@ -202,7 +200,7 @@ const Tasklist: React.FC<TasklistProps> = ({
                         openModal={() => openModalEditList()}
                     />
                 </Flex>
-                <Flex flexDir={'column'} gap={2}>
+                <Stack gap={2}>
                     <Card size="sm" variant={'secondary'}>
                         <CardBody padding={0}>
                             <IconButton
@@ -223,9 +221,9 @@ const Tasklist: React.FC<TasklistProps> = ({
                             onDragStart={(e) => handleDragStart(e, t.taskId)}
                         />
                     ))}
-                </Flex>
+                </Stack>
             </Card>
-        </Flex>
+        </Stack>
     );
 };
 

@@ -1,21 +1,24 @@
 import {
     Button,
-    FormControl, FormLabel,
+    FormControl,
+    FormLabel,
     Modal,
     ModalBody,
     ModalCloseButton,
-    ModalContent, ModalFooter,
+    ModalContent,
+    ModalFooter,
     ModalHeader,
-    ModalOverlay, Select
-} from "@chakra-ui/react";
-import React from "react";
+    ModalOverlay,
+    Select,
+} from '@chakra-ui/react';
+import React from 'react';
 
 type EditTaskListModalProps = {
     isOpen: boolean;
     onClose: () => void;
 };
 
-const EditTaskListModal = ({isOpen, onClose}: EditTaskListModalProps) => {
+const EditTaskListModal = ({ isOpen, onClose }: EditTaskListModalProps) => {
     const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         localStorage.setItem('sortSetting', event.target.value);
     };
@@ -25,11 +28,14 @@ const EditTaskListModal = ({isOpen, onClose}: EditTaskListModalProps) => {
             <ModalOverlay>
                 <ModalContent>
                     <ModalHeader>Edit TaskList</ModalHeader>
-                    <ModalCloseButton/>
+                    <ModalCloseButton />
                     <ModalBody>
                         <FormControl>
                             <FormLabel>Sorting</FormLabel>
-                            <Select defaultValue={localStorage.getItem('sortSetting')} onChange={handleSortChange}>
+                            <Select
+                                defaultValue={localStorage.getItem('sortSetting')}
+                                onChange={handleSortChange}
+                            >
                                 <option value="1">By Task ID</option>
                                 <option value="2">By Title</option>
                                 <option value="3">By Due Date</option>

@@ -3,6 +3,7 @@ import {
     Avatar,
     Box,
     Button,
+    Divider,
     Flex,
     HStack,
     IconButton,
@@ -58,7 +59,7 @@ export default function Navbar() {
 
     return (
         <>
-            <Box bg={useColorModeValue('gray.200', 'gray.1000')} px={4}>
+            <Box bg={useColorModeValue('gray.200', 'gray.1000')} px={5}>
                 <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
                     <IconButton
                         size={'md'}

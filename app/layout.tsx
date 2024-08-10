@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
-import { Flex } from '@chakra-ui/react';
+import { Flex, Stack } from '@chakra-ui/react';
 import Navbar from '@/components/Navbar';
 import { AuthProvider } from '@/providers/AuthProvider';
 import ChatDrawer from '@/components/ChatDrawer/ChatDrawer';
@@ -23,16 +23,16 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${inter.className}`}>
+            <body className={`${inter.className}`} style={{ maxHeight: '100vh' }}>
                 <AuthProvider>
                     <ReactQueryProvider>
-                        <Flex flexDirection={'column'} minHeight={'100vh'}>
-                            <ThemeProvider>
+                        <ThemeProvider>
+                            <Flex height="100vh" flexDirection={'column'}>
                                 <Navbar />
                                 {children}
                                 <ChatDrawer />
-                            </ThemeProvider>
-                        </Flex>
+                            </Flex>
+                        </ThemeProvider>
                     </ReactQueryProvider>
                 </AuthProvider>
             </body>
