@@ -1,23 +1,22 @@
 'use client';
 import {
-    Box,
-    Flex,
     Avatar,
+    Box,
+    Button,
+    Flex,
     HStack,
     IconButton,
-    Button,
     Menu,
     MenuButton,
-    MenuList,
     MenuItem,
-    useDisclosure,
-    useColorModeValue,
+    MenuList,
     Stack,
-    Divider,
     useColorMode,
+    useColorModeValue,
+    useDisclosure,
     useToast,
 } from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon, SettingsIcon } from '@chakra-ui/icons';
+import { CloseIcon, HamburgerIcon, MoonIcon, SettingsIcon, SunIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
 import useAuthContext from '@/providers/AuthProvider';
 import { getUserNameFromToken } from '@/utils/token';
@@ -59,7 +58,7 @@ export default function Navbar() {
 
     return (
         <>
-            <Box bg={useColorModeValue('gray.200', 'gray.900')} px={4}>
+            <Box bg={useColorModeValue('gray.200', 'gray.1000')} px={4}>
                 <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
                     <IconButton
                         size={'md'}
@@ -78,27 +77,32 @@ export default function Navbar() {
                             ))}
                         </HStack>
                     </HStack>
-                    <Flex alignItems={'center'}>
+                    <Flex alignItems={'center'} gap={4}>
+                        <IconButton
+                            aria-label={'Switch theme'}
+                            icon={colorMode === 'light' ? <SunIcon /> : <MoonIcon />}
+                            variant={'ghost'}
+                            onClick={toggleColorMode}
+                            size={'lg'}
+                        />
                         <Menu>
-                            <MenuButton
-                                as={Button}
-                                rounded={'full'}
-                                variant={'link'}
-                                cursor={'pointer'}
-                                minW={0}
-                                width={'2rem'}
-                            >
-                                {username ? (
-                                    <Avatar name={username} />
-                                ) : (
-                                    <SettingsIcon width={'80%'} height={'auto'} />
-                                )}
-                            </MenuButton>
+                            {username ? (
+                                <MenuButton>
+                                    <Avatar size={'md'} name={username} />
+                                </MenuButton>
+                            ) : (
+                                <MenuButton
+                                    as={IconButton}
+                                    rounded={'full'}
+                                    icon={<SettingsIcon />}
+                                    cursor={'pointer'}
+                                    size={'lg'}
+                                    variant={'ghost'}
+                                />
+                            )}
                             <MenuList>
                                 <MenuItem>Account</MenuItem>
                                 <MenuItem onClick={onLogout}>Log-out</MenuItem>
-                                <Divider />
-                                <MenuItem onClick={toggleColorMode}>Theme {colorMode}</MenuItem>
                             </MenuList>
                         </Menu>
                     </Flex>
@@ -121,17 +125,5 @@ export default function Navbar() {
 }
 
 const NavLink = ({ children }: React.PropsWithChildren) => {
-    return (
-        <Box
-            px={2}
-            py={1}
-            rounded={'md'}
-            _hover={{
-                textDecoration: 'none',
-                bg: useColorModeValue('gray.200', 'gray.700'),
-            }}
-        >
-            {children}
-        </Box>
-    );
+    return <Button variant={'ghost'}>{children}</Button>;
 };
