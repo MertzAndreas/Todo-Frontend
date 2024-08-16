@@ -22,6 +22,7 @@ import Link from 'next/link';
 import useAuthContext from '@/providers/AuthProvider';
 import { getUserNameFromToken } from '@/utils/token';
 import React, { useEffect, useState } from 'react';
+import LogoIcon from "@/components/LogoIcon";
 
 const Links = [{ name: 'Dashboard', link: '/Dashboard' }];
 const toastOptions = {
@@ -69,7 +70,9 @@ export default function Navbar() {
                         onClick={isOpen ? onClose : onOpen}
                     />
                     <HStack spacing={8} alignItems={'center'}>
-                        <Box>Logo</Box>
+                        <Box>
+                            <LogoIcon/>
+                        </Box>
                         <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
                             {Links.map(({ name, link }) => (
                                 <NavLink key={link}>
